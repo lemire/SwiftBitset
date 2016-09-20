@@ -24,6 +24,7 @@ Swift 3.0 or better.
        print(i)
      }
      // will print 1 4 10 1000 10000
+     b1.remove(4) // can remove values
 ```
 
 ## Usage

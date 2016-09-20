@@ -1,11 +1,32 @@
 import XCTest
 @testable import Bitset
 class BitsetTests : XCTestCase {
+
   func testSetGet() {
     let b = Bitset();
+    XCTAssertEqual(b.isEmpty(), true, "Bad empty");
     b.add(1);
+    XCTAssertEqual(b.isEmpty(), false, "Bad empty");
     XCTAssertEqual(b.contains(1), true, "Bad set/get");
     XCTAssertEqual(b.count(), 1, "Bad count");
+  }
+
+  func testSetGetLarge() {
+    let b = Bitset();
+    b.add(Int(UInt16.max));
+    XCTAssertEqual(b.contains(Int(UInt16.max)), true, "Bad set/get");
+    if Int.max != Int(UInt16.max) {
+      XCTAssertEqual(b.contains(Int.max), false, "Bad set/get");
+    }
+    XCTAssertEqual(b.count(), 1, "Bad count");
+  }
+  func testRemove() {
+    let b = Bitset(1, 4, 10, 1000, 10000);
+    XCTAssertEqual(b.count(), 5, "Bad count");
+    for i in b {
+      b.remove(i)
+    }
+    XCTAssertEqual(b.count(), 0, "Bad count");
   }
 
   func testIntersection() {
@@ -77,6 +98,8 @@ extension TodoTests {
       ("testIntersection2", testIntersection2),
       ("testIntersection", testIntersection),
       ("testSetGet", testSetGet),
+      ("testSetGetLarge", testSetGetLarge),
+      ("testRemove()", testRemove)
     ]
   }
 }
