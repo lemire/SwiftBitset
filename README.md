@@ -1,5 +1,8 @@
 # SwiftBitset
 
+[![Swift 3.0](https://img.shields.io/badge/swift-3.0-orange.svg)](https://swift.org)
+
+
 A fast bitset class in Swift for fast and concise set operations over integers.
 
 ## Pre-requisite
