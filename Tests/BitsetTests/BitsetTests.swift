@@ -6,6 +6,7 @@ class BitsetTests : XCTestCase {
     let b = Bitset();
     XCTAssertEqual(b.isEmpty(), true, "Bad empty");
     b.add(1);
+    print(b.hashValue)
     XCTAssertEqual(b.isEmpty(), false, "Bad empty");
     XCTAssertEqual(b.contains(1), true, "Bad set/get");
     XCTAssertEqual(b.count(), 1, "Bad count");
@@ -22,6 +23,7 @@ class BitsetTests : XCTestCase {
   }
   func testRemove() {
     let b = Bitset(1, 4, 10, 1000, 10000);
+    print(b);
     XCTAssertEqual(b.count(), 5, "Bad count");
     for i in b {
       b.remove(i)
@@ -37,6 +39,71 @@ class BitsetTests : XCTestCase {
     XCTAssertEqual(b2, bexpected, "Bad intersection");
     XCTAssertEqual(b2.count(), 3, "Bad intersection count");
   }
+
+  func testOperator1() {
+    let b1 = Bitset(1, 4, 10, 1000, 10000);
+    let b2 = Bitset(1, 3, 10, 1000);
+    let B1 = Bitset(b1);
+    let B2 = Bitset(b2);
+
+    b2 ^= b1
+    B2.symmetricDifference(B1)
+    XCTAssertEqual(B2, b2, "Bad operator");
+  }
+  func testOperator2() {
+    let b1 = Bitset(1, 4, 10, 1000, 10000);
+    let b2 = Bitset(1, 3, 10, 1000);
+    let B1 = Bitset(b1);
+    let B2 = Bitset(b2);
+
+    let b3 = b2 ^ b1
+    B2.symmetricDifference(B1)
+    XCTAssertEqual(B2, b3, "Bad operator");
+  }
+
+  func testOperator3() {
+    let b1 = Bitset(1, 4, 10, 1000, 10000);
+    let b2 = Bitset(1, 3, 10, 1000);
+    let B1 = Bitset(b1);
+    let B2 = Bitset(b2);
+
+    b2 &= b1
+    B2.intersection(B1)
+    XCTAssertEqual(B2, b2, "Bad operator");
+  }
+  func testOperator4() {
+    let b1 = Bitset(1, 4, 10, 1000, 10000);
+    let b2 = Bitset(1, 3, 10, 1000);
+    let B1 = Bitset(b1);
+    let B2 = Bitset(b2);
+
+    let b3 = b2 & b1
+    B2.intersection(B1)
+    XCTAssertEqual(B2, b3, "Bad operator");
+  }
+
+  func testOperator5() {
+    let b1 = Bitset(1, 4, 10, 1000, 10000);
+    let b2 = Bitset(1, 3, 10, 1000);
+    let B1 = Bitset(b1);
+    let B2 = Bitset(b2);
+
+    b2 |= b1
+    B2.union(B1)
+    XCTAssertEqual(B2, b2, "Bad operator");
+  }
+
+  func testOperator6() {
+    let b1 = Bitset(1, 4, 10, 1000, 10000);
+    let b2 = Bitset(1, 3, 10, 1000);
+    let B1 = Bitset(b1);
+    let B2 = Bitset(b2);
+
+    let b3 = b2 | b1
+    B2.union(B1)
+    XCTAssertEqual(B2, b3, "Bad operator");
+  }
+
 
   func testIntersection2() {
     let b1 = Bitset(1, 4, 10, 1000, 10000);
@@ -99,7 +166,13 @@ extension TodoTests {
       ("testIntersection", testIntersection),
       ("testSetGet", testSetGet),
       ("testSetGetLarge", testSetGetLarge),
-      ("testRemove()", testRemove)
+      ("testRemove()", testRemove),
+      ("testOperator1()", testOperator1),
+      ("testOperator2()", testOperator2),
+      ("testOperator3()", testOperator3),
+      ("testOperator4()", testOperator4),
+      ("testOperator5()", testOperator5),
+      ("testOperator6()", testOperator6)
     ]
   }
 }

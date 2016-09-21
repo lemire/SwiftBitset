@@ -1,6 +1,6 @@
 
 // a class that can be used as an efficient set container for non-negative integers
-public class Bitset : Sequence, Equatable {
+public final class Bitset : Sequence, Equatable, CustomStringConvertible, Hashable {
   var data = [UInt64]()
 
   // copy construction
@@ -12,6 +12,82 @@ public class Bitset : Sequence, Equatable {
       for i in allints { add(i) }
   }
 
+
+
+  // return an empty bitset
+  public static var allZeros: Bitset { return Bitset() }
+
+  public static func |(lhs: Bitset, rhs: Bitset) -> Bitset  {
+    let mycopy = Bitset(lhs);
+    mycopy.union(rhs);
+    return mycopy;
+  }
+
+  // compute the union between two bitsets inplace
+  public static func |=(lhs: Bitset, rhs: Bitset) {
+    lhs.union(rhs);
+  }
+
+
+  public static func ^(lhs: Bitset, rhs: Bitset) -> Bitset {
+    let mycopy = Bitset(lhs);
+    mycopy.symmetricDifference(rhs);
+    return mycopy;
+  }
+
+  public static func ^=(lhs: Bitset, rhs: Bitset) {
+    lhs.symmetricDifference(rhs);
+  }
+
+  // compute the union between two bitsets inplace
+  public static func &=(lhs: Bitset, rhs: Bitset)  {
+    lhs.intersection(rhs);
+  }
+
+  // computes the intersection between two bitsets and return a new bitset
+  public static func &(lhs: Bitset, rhs: Bitset) -> Bitset {
+    let mycopy = Bitset(lhs);
+    mycopy.intersection(rhs);
+    return mycopy;
+  }
+
+  public var hashValue: Int {
+      let b : UInt64 = 31;
+      var hash : UInt64 = 0;
+      for w in data {
+        hash = hash * b + w;
+      }
+      hash = hash ^ ( hash >> 33)
+      hash = hash &* 0xff51afd7ed558ccd
+      hash = hash ^ ( hash >> 33)
+      hash = hash &* 0xc4ceb9fe1a85ec53
+      return Int(hash);
+  }
+
+
+
+  // presents a string representation of the bitset
+  public var description: String {
+    var answer = "{";
+    var counter = 0;
+    var hasPrevious = false;
+    for val in self {
+      counter += 1;
+      if hasPrevious {
+        answer += ", ";
+      } else {
+        hasPrevious = true;
+      }
+      if counter == 100 {
+        answer += "...";
+        break;
+      } else {
+        answer += String(val);
+      }
+    }
+    answer += "}";
+    return answer;
+  }
 
   // create an iterator over the values contained in the bitset
   public func makeIterator()->AnyIterator<Int> {
@@ -90,6 +166,14 @@ public class Bitset : Sequence, Equatable {
     for i in mincount..<data.count { data[i] = 0 }
   }
 
+  // compute the size of the intersection with another bitset
+  public func intersectionCount(_ other : Bitset) -> Int {
+    let mincount = other.data.count < data.count ? other.data.count : data.count;
+    var sum = 0;
+    for i in 0..<mincount { sum += Bitset.popcount( data[i] & other.data[i]) }
+    return sum;
+  }
+
   // compute the union (in place) with another bitset
   public func union(_ other : Bitset) {
     let mincount = other.data.count < data.count ? other.data.count : data.count;
@@ -102,6 +186,80 @@ public class Bitset : Sequence, Equatable {
         data.append(other.data[i])
       }
     }
+  }
+
+  // compute the size union  with another bitset
+  public func unionCount(_ other : Bitset) -> Int  {
+    let mincount = other.data.count < data.count ? other.data.count : data.count;
+    var sum = 0
+    for  i in 0..<mincount {
+      sum += Bitset.popcount(data[i] | other.data[i])
+    }
+    if other.data.count > data.count {
+      for i in mincount..<other.data.count {
+        sum += Bitset.popcount(other.data[i])
+      }
+    } else {
+      for i in mincount..<data.count {
+        sum += Bitset.popcount(data[i])
+      }
+    }
+    return sum;
+  }
+
+  // compute the symmetric difference (in place) with another bitset
+  public func symmetricDifference(_ other : Bitset) {
+    let mincount = other.data.count < data.count ? other.data.count : data.count;
+    for  i in 0..<mincount {
+      data[i] ^= other.data[i]
+    }
+    if other.data.count > data.count {
+      data.reserveCapacity(other.data.count)
+      for i in mincount..<other.data.count {
+        data.append(other.data[i])
+      }
+    }
+  }
+
+  // compute the size union  with another bitset
+  public func symmetricDifferenceCount(_ other : Bitset) -> Int  {
+    let mincount = other.data.count < data.count ? other.data.count : data.count;
+    var sum = 0
+    for  i in 0..<mincount {
+      sum += Bitset.popcount(data[i] ^ other.data[i])
+    }
+    if other.data.count > data.count {
+      for i in mincount..<other.data.count {
+        sum += Bitset.popcount(other.data[i])
+      }
+    } else {
+      for i in mincount..<data.count {
+        sum += Bitset.popcount(data[i])
+      }
+    }
+    return sum;
+  }
+
+
+  // compute the difference (in place) with another bitset
+  public func difference(_ other : Bitset) {
+    let mincount = other.data.count < data.count ? other.data.count : data.count;
+    for  i in 0..<mincount {
+      data[i] &= ~other.data[i]
+    }
+  }
+
+  // compute the size of the difference with another bitset
+  public func differenceCount(_ other : Bitset) -> Int {
+    let mincount = other.data.count < data.count ? other.data.count : data.count;
+    var sum = 0
+    for  i in 0..<mincount {
+      sum += Bitset.popcount( data[i] & ~other.data[i])
+    }
+    for i in mincount..<data.count {
+      sum += Bitset.popcount(data[i])
+    }
+    return sum
   }
 
   // remove a value, must be non-negative
