@@ -17,6 +17,7 @@ public final class Bitset : Sequence, Equatable, CustomStringConvertible,
 
   public typealias Element = Int
 
+  // initializing from array literal
   public init(arrayLiteral elements: Int...) {
       for i in elements { add(i) }
   }
@@ -26,6 +27,7 @@ public final class Bitset : Sequence, Equatable, CustomStringConvertible,
   // return an empty bitset
   public static var allZeros: Bitset { return Bitset() }
 
+  // union between two bitsets, producing a new bitset
   public static func |(lhs: Bitset, rhs: Bitset) -> Bitset  {
     let mycopy = Bitset(lhs);
     mycopy.union(rhs);
@@ -37,23 +39,26 @@ public final class Bitset : Sequence, Equatable, CustomStringConvertible,
     lhs.union(rhs);
   }
 
-
+  // difference between two bitsets, producing a new bitset
   public static func &^(lhs: Bitset, rhs: Bitset) -> Bitset {
     let mycopy = Bitset(lhs);
     mycopy.difference(rhs);
     return mycopy;
   }
 
+  // inplace difference between two bitsets
   public static func &^=(lhs: Bitset, rhs: Bitset) {
     lhs.difference(rhs);
   }
 
+  // symmetric difference between two bitsets, producing a new bitset
   public static func ^(lhs: Bitset, rhs: Bitset) -> Bitset {
     let mycopy = Bitset(lhs);
     mycopy.symmetricDifference(rhs);
     return mycopy;
   }
 
+  // inplace symmetric difference between two bitsets
   public static func ^=(lhs: Bitset, rhs: Bitset) {
     lhs.symmetricDifference(rhs);
   }
@@ -70,6 +75,7 @@ public final class Bitset : Sequence, Equatable, CustomStringConvertible,
     return mycopy;
   }
 
+  // hash value for the bitset
   public var hashValue: Int {
       let b : UInt64 = 31;
       var hash : UInt64 = 0;
@@ -372,22 +378,23 @@ public final class Bitset : Sequence, Equatable, CustomStringConvertible,
     return Int(x >> 56)
   }
 
-}
-
-public func == (lhs : Bitset, rhs : Bitset) ->Bool {
-  if (lhs.data.count > rhs.data.count) {
-        for  i in rhs.data.count..<lhs.data.count {
-            if lhs.data[i] != 0 { return false; }
-        }
-  } else if (lhs.data.count < rhs.data.count) {
-        for i in lhs.data.count..<rhs.data.count {
-            if rhs.data[i] != 0 { return false; }
+  // checks whether the two bitsets have the same content
+  public static func == (lhs : Bitset, rhs : Bitset) ->Bool {
+    if (lhs.data.count > rhs.data.count) {
+          for  i in rhs.data.count..<lhs.data.count {
+              if lhs.data[i] != 0 { return false; }
           }
+    } else if (lhs.data.count < rhs.data.count) {
+          for i in lhs.data.count..<rhs.data.count {
+              if rhs.data[i] != 0 { return false; }
+            }
+    }
+    let mincount =
+        lhs.data.count < rhs.data.count ? lhs.data.count : rhs.data.count;
+        for  i in 0..<mincount {
+            if  rhs.data[i] != lhs.data[i] { return false }
+          }
+        return true
   }
-  let mincount =
-      lhs.data.count < rhs.data.count ? lhs.data.count : rhs.data.count;
-      for  i in 0..<mincount {
-          if  rhs.data[i] != lhs.data[i] { return false }
-        }
-      return true
+
 }
