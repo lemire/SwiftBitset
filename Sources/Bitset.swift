@@ -160,9 +160,8 @@ public final class Bitset : Sequence, Equatable, CustomStringConvertible,
   public func add(_ i : Int) {
     let index = Bitset.logicalrightshift(x : i, s : 6);
     if index >= data.count { ensureCapacity(i) }
-    let one : UInt64 = 1;
-    let shiftamount : UInt64 = UInt64(i & 63);
-    data[index] |= one << shiftamount
+    let shiftamount = UInt64(i & 63);
+    data[index] |= 1 << shiftamount
   }
 
   // add all the values  to the bitset
@@ -178,9 +177,8 @@ public final class Bitset : Sequence, Equatable, CustomStringConvertible,
   public func contains(_ i : Int)->Bool {
     let index = Bitset.logicalrightshift(x : i, s : 6);
     if index >= data.count { return false }
-    let one : UInt64 = 1;
-    let shiftamount  = UInt64(i & 63);
-    let shiftedbit = one << shiftamount;
+    let shiftamount = UInt64(i & 63);
+    let shiftedbit = 1 << shiftamount;
     return data[index] & shiftedbit != 0
   }
 
@@ -300,9 +298,8 @@ public final class Bitset : Sequence, Equatable, CustomStringConvertible,
   public func remove(_ i : Int) {
     let index = Bitset.logicalrightshift(x : i, s : 6);
     if index < data.count {
-        let one : UInt64 = 1;
         let shiftamount = UInt64(i & 63);
-        let shiftedbit = one << shiftamount;
+        let shiftedbit = 1 << shiftamount;
         let negshiftedbit = ~shiftedbit;
         data[index] &= negshiftedbit
       }
@@ -312,15 +309,13 @@ public final class Bitset : Sequence, Equatable, CustomStringConvertible,
   public func flip(_ i : Int) {
     let index = Bitset.logicalrightshift(x : i, s : 6);
     if index < data.count {
-        let one : UInt64 = 1;
         let shiftamount = UInt64(i & 63);
-        let shiftedbit = one << shiftamount;
+        let shiftedbit = 1 << shiftamount;
         data[index] ^= shiftedbit;
     } else {
         ensureCapacity(i);
-        let one : UInt64 = 1;
         let shiftamount : UInt64 = UInt64(i & 63);
-        data[index] |= one << shiftamount
+        data[index] |= 1 << shiftamount
     }
   }
 
