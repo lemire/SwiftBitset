@@ -1,6 +1,7 @@
 
 // a class that can be used as an efficient set container for non-negative integers
-public final class Bitset : Sequence, Equatable, CustomStringConvertible, Hashable {
+public final class Bitset : Sequence, Equatable, CustomStringConvertible,
+                           Hashable, ExpressibleByArrayLiteral {
   var data = [UInt64]()
 
   // copy construction
@@ -10,6 +11,12 @@ public final class Bitset : Sequence, Equatable, CustomStringConvertible, Hashab
   // adding the value i to the bitset will cause the use of least (i+8)/8 bytes
   public init(_ allints : Int...) {
       for i in allints { add(i) }
+  }
+
+  public typealias Element = Int
+
+  public init(arrayLiteral elements: Int...) {
+      for i in elements { add(i) }
   }
 
 
@@ -157,6 +164,15 @@ public final class Bitset : Sequence, Equatable, CustomStringConvertible, Hashab
     let shiftamount  = UInt64(i & 63);
     let shiftedbit = one << shiftamount;
     return data[index] & shiftedbit != 0
+  }
+
+  public subscript(i: Int) -> Bool {
+    get {
+        return contains(i)
+    }
+    set(newValue) {
+        if newValue { add(i);}
+    }
   }
 
   // compute the intersection (in place) with another bitset

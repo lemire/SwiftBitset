@@ -12,6 +12,19 @@ class BitsetTests : XCTestCase {
     XCTAssertEqual(b.count(), 1, "Bad count");
   }
 
+  func testLiteral() {
+    let b1 : Bitset = [1, 2, 3];
+    let b2 = Bitset (1,2,3);
+    XCTAssertEqual(b1, b2, "Bad litteral");
+    XCTAssertEqual(b1.contains(1), true, "Bad set/get");
+    XCTAssertEqual(b1.contains(2), true, "Bad set/get");
+    XCTAssertEqual(b1.contains(3), true, "Bad set/get");
+    XCTAssertEqual(b1[1], true, "Bad set/get");
+    XCTAssertEqual(b1[2], true, "Bad set/get");
+    XCTAssertEqual(b1[3], true, "Bad set/get");
+    XCTAssertEqual(b1.count(), 3, "Bad count");
+  }
+
   func testSetGetLarge() {
     let b = Bitset();
     b.add(Int(UInt16.max));
@@ -172,7 +185,8 @@ extension TodoTests {
       ("testOperator3()", testOperator3),
       ("testOperator4()", testOperator4),
       ("testOperator5()", testOperator5),
-      ("testOperator6()", testOperator6)
+      ("testOperator6()", testOperator6),
+      ("testLiteral()", testLiteral)
     ]
   }
 }
