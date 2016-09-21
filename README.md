@@ -1,6 +1,7 @@
 # SwiftBitset
 
-[![Swift 3.0](https://img.shields.io/badge/swift-3.0-orange.svg)](https://swift.org)
+<a href="https://developer.apple.com/swift"><img src="https://img.shields.io/badge/Swift3-compatible-orange.svg?style=flat" alt="Swift 3 compatible" /></a>
+<a href="https://github.com/apple/swift-package-manager"><img src="https://img.shields.io/badge/Swift%20Package%20Manager-compatible-brightgreen.svg"/></a>
 
 
 A bitset class in Swift for fast and concise set operations over integers.
@@ -71,6 +72,14 @@ for i in b1 {
 }
 // will print 1 4 10 1000 10000
 b1.remove(4) // can remove values
+let d1 = b1 & b2;// intersection
+let d2 = b1 | b2;// union
+let d3 = b1 &^ b2;// difference
+let d4 = b1 ^ b2;// symmetric difference
+b1 &= b2;// inplace intersection
+b1 |= b2;// inplace union
+b1 &^= b2;// inplace difference
+b1 ^= b2;// inplace symmetric difference
 ```
 
 ## Usage for contributors

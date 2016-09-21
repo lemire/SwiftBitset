@@ -5,11 +5,16 @@ class BitsetTests : XCTestCase {
   func testSetGet() {
     let b = Bitset();
     XCTAssertEqual(b.isEmpty(), true, "Bad empty");
+    print(b);
     b.add(1);
-    print(b.hashValue)
+    print(b);
+    b.add(63);
+    print(b.hashValue);
+    print(b);
     XCTAssertEqual(b.isEmpty(), false, "Bad empty");
     XCTAssertEqual(b.contains(1), true, "Bad set/get");
-    XCTAssertEqual(b.count(), 1, "Bad count");
+    XCTAssertEqual(b.contains(63), true, "Bad set/get");
+    XCTAssertEqual(b.count(), 2, "Bad count");
   }
 
   func testLiteral() {
@@ -117,6 +122,26 @@ class BitsetTests : XCTestCase {
     XCTAssertEqual(B2, b3, "Bad operator");
   }
 
+  func testOperator7() {
+    let b1 = Bitset(1, 4, 10, 1000, 10000);
+    let b2 = Bitset(1, 3, 10, 1000);
+    let B1 = Bitset(b1);
+    let B2 = Bitset(b2);
+
+    b2 &^= b1
+    B2.difference(B1)
+    XCTAssertEqual(B2, b2, "Bad operator");
+  }
+  func testOperator8() {
+    let b1 = Bitset(1, 4, 10, 1000, 10000);
+    let b2 = Bitset(1, 3, 10, 1000);
+    let B1 = Bitset(b1);
+    let B2 = Bitset(b2);
+
+    let b3 = b2 &^ b1
+    B2.difference(B1)
+    XCTAssertEqual(B2, b3, "Bad operator");
+  }
 
   func testIntersection2() {
     let b1 = Bitset(1, 4, 10, 1000, 10000);
@@ -144,6 +169,14 @@ class BitsetTests : XCTestCase {
        print(i)
     }
      // will print 1 4 10 1000 10000
+    let _ = b1 & b2;// intersection
+    let _ = b1 | b2;// union
+    let _ = b1 &^ b2;// difference
+    let _ = b1 ^ b2;// symmetric difference
+    b1 &= b2;// inplace intersection
+    b1 |= b2;// inplace union
+    b1 &^= b2;// inplace difference
+    b1 ^= b2;// inplace symmetric difference
   }
 
   func testIterator() {
@@ -186,6 +219,8 @@ extension TodoTests {
       ("testOperator4()", testOperator4),
       ("testOperator5()", testOperator5),
       ("testOperator6()", testOperator6),
+      ("testOperator7()", testOperator7),
+      ("testOperator8()", testOperator8),
       ("testLiteral()", testLiteral)
     ]
   }

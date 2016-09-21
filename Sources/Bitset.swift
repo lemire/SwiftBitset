@@ -1,3 +1,5 @@
+infix operator &^;// andNot
+infix operator &^=;// andNot
 
 // a class that can be used as an efficient set container for non-negative integers
 public final class Bitset : Sequence, Equatable, CustomStringConvertible,
@@ -36,6 +38,16 @@ public final class Bitset : Sequence, Equatable, CustomStringConvertible,
   }
 
 
+  public static func &^(lhs: Bitset, rhs: Bitset) -> Bitset {
+    let mycopy = Bitset(lhs);
+    mycopy.difference(rhs);
+    return mycopy;
+  }
+
+  public static func &^=(lhs: Bitset, rhs: Bitset) {
+    lhs.difference(rhs);
+  }
+
   public static func ^(lhs: Bitset, rhs: Bitset) -> Bitset {
     let mycopy = Bitset(lhs);
     mycopy.symmetricDifference(rhs);
@@ -62,13 +74,13 @@ public final class Bitset : Sequence, Equatable, CustomStringConvertible,
       let b : UInt64 = 31;
       var hash : UInt64 = 0;
       for w in data {
-        hash = hash * b + w;
+        hash = hash &* b &+ w;
       }
       hash = hash ^ ( hash >> 33)
       hash = hash &* 0xff51afd7ed558ccd
       hash = hash ^ ( hash >> 33)
       hash = hash &* 0xc4ceb9fe1a85ec53
-      return Int(hash);
+      return Int(truncatingBitPattern:hash);
   }
 
 
@@ -171,7 +183,7 @@ public final class Bitset : Sequence, Equatable, CustomStringConvertible,
         return contains(i)
     }
     set(newValue) {
-        if newValue { add(i);}
+        if newValue { add(i)} else {remove(i)}
     }
   }
 
@@ -290,6 +302,22 @@ public final class Bitset : Sequence, Equatable, CustomStringConvertible,
       }
   }
 
+  // remove a value, if it is present it is removed, otherwise it is added, must be non-negative
+  public func flip(_ i : Int) {
+    let index = Bitset.logicalrightshift(x : i, s : 6);
+    if index < data.count {
+        let one : UInt64 = 1;
+        let shiftamount = UInt64(i & 63);
+        let shiftedbit = one << shiftamount;
+        data[index] ^= shiftedbit;
+    } else {
+        ensureCapacity(i);
+        let one : UInt64 = 1;
+        let shiftamount : UInt64 = UInt64(i & 63);
+        data[index] |= one << shiftamount
+    }
+  }
+
   // remove many values, all must be non-negative
   public func removeMany(_ allints : Int...) {
     for i in allints { remove(i) }
@@ -328,8 +356,9 @@ public final class Bitset : Sequence, Equatable, CustomStringConvertible,
   static let deBruijn = [ 0, 1, 56, 2, 57, 49, 28, 3, 61, 58, 42, 50, 38, 29, 17, 4, 62, 47, 59, 36, 45, 43, 51, 22, 53, 39, 33, 30, 24, 18, 12, 5, 63, 55, 48, 27, 60, 41, 37, 16, 46, 35, 44, 21, 52, 32, 23, 11, 54, 26, 40, 15, 34, 20, 31, 10, 25, 14, 19, 9, 13, 8, 7, 6, ]
 
   static func trailingZeroes(_ v : UInt64)->Int {
-    let lowbit = Int64(v) & (-Int64(v));
-    let lowbitmulti = UInt64(lowbit) &* 0x03f79d71b4ca8b09;
+    let ival = Int64(bitPattern:v)
+    let lowbit = ival & (-ival);
+    let lowbitmulti = UInt64(bitPattern:lowbit) &* 0x03f79d71b4ca8b09;
     return deBruijn[Int(lowbitmulti >> 58)]
   }
 
