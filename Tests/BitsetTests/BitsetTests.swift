@@ -1,6 +1,38 @@
 import XCTest
 @testable import Bitset
 class BitsetTests : XCTestCase {
+  func testAddPerformance() {
+    measure() {
+      let b = Bitset();
+      for i in stride(from: 0, to: 10_000_000, by: 100){
+          b.add(i)
+      }
+    }
+  }
+
+  func testCountPerformance() {
+    let b1 = Bitset();
+    for i in stride(from: 0, to: 100_000_000, by: 100){
+          b1.add(i)
+    }
+    measure() {
+      let _ = b1.count();
+    }
+  }
+
+
+  func testIteratorPerformance() {
+    let b1 = Bitset();
+    for i in stride(from: 0, to: 100_000_000, by: 100){
+          b1.add(i)
+    }
+    var sum = 0;
+    measure() {
+      for _ in  b1 {
+        sum += 1;
+      }
+    }
+  }
 
   func testSetGet() {
     let b = Bitset();
@@ -221,7 +253,10 @@ extension TodoTests {
       ("testOperator6()", testOperator6),
       ("testOperator7()", testOperator7),
       ("testOperator8()", testOperator8),
-      ("testLiteral()", testLiteral)
+      ("testLiteral()", testLiteral),
+      ("testAddPerformance()", testPerformance),
+      ("testCountPerformance()", testPerformance),
+      ("testIteratorPerformance()", testPerformance)
     ]
   }
 }
