@@ -4,7 +4,7 @@ class BitsetTests : XCTestCase {
   func testAddPerformance() {
     measure() {
       let b = Bitset();
-      for i in stride(from: 0, to: 10_000_000, by: 100){
+      for i in stride(from: 0, to: 100_000_000, by: 100){
           b.add(i)
       }
     }

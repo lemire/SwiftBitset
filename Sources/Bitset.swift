@@ -115,31 +115,8 @@ public final class Bitset : Sequence, Equatable, CustomStringConvertible,
   }
 
   // create an iterator over the values contained in the bitset
-  public func makeIterator()->AnyIterator<Int> {
-    var i : Int = -1;
-    return AnyIterator {
-      i += 1;
-      var x = Bitset.logicalrightshift(x : i, s : 6);
-      if x >= self.data.count {
-        return nil
-      }
-      var w = self.data[x];
-      w >>= UInt64(i & 63);
-      if w != 0 {
-        i += Bitset.trailingZeroes(w);
-        return i
-      }
-      x += 1;
-      while x < self.data.count {
-        let w = self.data[x];
-        if w != 0 {
-          i = x * 64 + Bitset.trailingZeroes(w);
-          return i
-        }
-        x += 1
-      }
-      return nil
-    }
+  public func makeIterator()->BitsetIterator {
+    return BitsetIterator(self)
   }
 
   // count how many values have been stored in the bitset (this function is not free of computation)
@@ -344,7 +321,7 @@ public final class Bitset : Sequence, Equatable, CustomStringConvertible,
 
   func ensureCapacity(_ index : Int) {
     let newcount = Bitset.logicalrightshift(x : index, s : 6) + 1;
-    data.reserveCapacity(newcount);
+    // calling data.reserveCapacity(newcount); is a really bad idea
     while data.count < newcount {
       data.append(0)
     }
@@ -392,4 +369,36 @@ public final class Bitset : Sequence, Equatable, CustomStringConvertible,
         return true
   }
 
+}
+public struct BitsetIterator: IteratorProtocol {
+   let bitset: Bitset
+   var i : Int = -1;
+
+   init(_ bitset: Bitset) {
+       self.bitset = bitset
+   }
+
+   public mutating func next() -> Int? {
+     i += 1;
+     var x = Bitset.logicalrightshift(x : i, s : 6);
+     if x >= bitset.data.count {
+       return nil
+     }
+     var w = bitset.data[x];
+     w >>= UInt64(i & 63);
+     if w != 0 {
+       i += Bitset.trailingZeroes(w);
+       return i
+     }
+     x += 1;
+     while x < bitset.data.count {
+       let w = bitset.data[x];
+       if w != 0 {
+         i = x * 64 + Bitset.trailingZeroes(w);
+         return i
+       }
+       x += 1
+     }
+     return nil
+   }
 }
