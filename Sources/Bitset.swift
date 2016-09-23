@@ -190,7 +190,7 @@ public final class Bitset : Sequence, Equatable, CustomStringConvertible,
       data[i] |= other.data[i]
     }
     if other.data.count > data.count {
-      data.reserveCapacity(other.data.count)
+      //data.reserveCapacity(other.data.count) // bad idea?
       for i in mincount..<other.data.count {
         data.append(other.data[i])
       }
@@ -223,7 +223,7 @@ public final class Bitset : Sequence, Equatable, CustomStringConvertible,
       data[i] ^= other.data[i]
     }
     if other.data.count > data.count {
-      data.reserveCapacity(other.data.count)
+      // data.reserveCapacity(other.data.count) // bad idea?
       for i in mincount..<other.data.count {
         data.append(other.data[i])
       }

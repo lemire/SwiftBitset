@@ -38,11 +38,11 @@ class BitsetTests : XCTestCase {
 
   func testUnionPerformance() {
     let b1 = Bitset();
-    for i in stride(from: 0, to: 10_000_000, by: 100){
+    for i in stride(from: 0, to: 100_000_000, by: 100){
           b1.add(i)
     }
     let b2 = Bitset();
-    for i in stride(from: 0, to: 100_000_000, by: 99){
+    for i in stride(from: 0, to: 1_000_000_000, by: 99){
           b1.add(i)
     }
     var sum = 0
@@ -52,6 +52,7 @@ class BitsetTests : XCTestCase {
       sum += z.count();
     }
   }
+  
   func testSetGet() {
     let b = Bitset();
     XCTAssertEqual(b.isEmpty(), true, "Bad empty");
