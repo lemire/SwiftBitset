@@ -123,7 +123,7 @@ public final class Bitset : Sequence, Equatable, CustomStringConvertible,
   public func count()->Int {
     var sum : Int = 0
     for w in data {
-      sum += Bitset.popcount(w)
+      sum += Bitset.popcount(w) 
     }
     return sum
   }
@@ -179,7 +179,7 @@ public final class Bitset : Sequence, Equatable, CustomStringConvertible,
   public func intersectionCount(_ other : Bitset) -> Int {
     let mincount = other.data.count < data.count ? other.data.count : data.count;
     var sum = 0;
-    for i in 0..<mincount { sum += Bitset.popcount( data[i] & other.data[i]) }
+    for i in 0..<mincount { sum += Bitset.popcount( data[i] & other.data[i]) } 
     return sum;
   }
 
@@ -202,7 +202,7 @@ public final class Bitset : Sequence, Equatable, CustomStringConvertible,
     let mincount = other.data.count < data.count ? other.data.count : data.count;
     var sum = 0
     for  i in 0..<mincount {
-      sum += Bitset.popcount(data[i] | other.data[i])
+      sum += Bitset.popcount(data[i] | other.data[i]) 
     }
     if other.data.count > data.count {
       for i in mincount..<other.data.count {
@@ -340,7 +340,7 @@ public final class Bitset : Sequence, Equatable, CustomStringConvertible,
     return deBruijn[Int(lowbitmulti >> 58)]
   }
 
-  static func popcount(_ i : UInt64)->Int {
+  static func popcount(_ i : UInt64)->Int { // should be obsolete once Swift supports it natively
     var x = i;
     x -= (x >> 1) & 0x5555555555555555;
     x = (x >> 2) & 0x3333333333333333 + x & 0x3333333333333333;
