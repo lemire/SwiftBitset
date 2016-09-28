@@ -253,8 +253,8 @@ class BitsetTests : XCTestCase {
 }
 
 #if os(Linux)
-extension TodoTests {
-  static var allTests : [(String, TodoTests->() throws->Void)] {
+extension BitsetTests {
+  static var allTests : [(String, (BitsetTests)->() throws->Void)] {
     return [
       ("testUnion", testUnion),
       ("testIterator", testIterator),
@@ -273,9 +273,9 @@ extension TodoTests {
       ("testOperator7()", testOperator7),
       ("testOperator8()", testOperator8),
       ("testLiteral()", testLiteral),
-      ("testAddPerformance()", testPerformance),
-      ("testCountPerformance()", testPerformance),
-      ("testIteratorPerformance()", testPerformance)
+      ("testAddPerformance()", testAddPerformance),
+      ("testCountPerformance()", testCountPerformance),
+      ("testIteratorPerformance()", testIteratorPerformance)
     ]
   }
 }

@@ -1,1 +1,4 @@
-import XCTest @testable import BitsetTestSuite XCTMain([testCase(BitsetTests.allTests)])
+import XCTest;
+@testable import BitsetTests;
+
+XCTMain([testCase(BitsetTests.allTests)])
