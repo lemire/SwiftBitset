@@ -89,6 +89,11 @@ swift build
 swift test # optional
 ```
 
+For interactive use:
+```bash
+swift build
+swift -I .build/debug -L .build/debug -lBitset
+```
 
 ## Licensing
 
