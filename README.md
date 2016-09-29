@@ -46,8 +46,8 @@ for i in b1 {
 You can run your example as follows:
 
 ```bash    
-swift build
-.build/debug/fun
+swift build --configuration release
+.build/release/fun
 ```
 
 
@@ -85,14 +85,14 @@ b1 ^= b2;// inplace symmetric difference
 ## Usage for contributors
 
 ```bash
-swift build
+swift build --configuration release
 swift test # optional
 ```
 
 For interactive use:
 ```bash
-swift build
-swift -I .build/debug -L .build/debug -lBitset
+swift build --configuration release
+swift -I .build/release -L .build/release -lBitset
 ```
 
 ## Licensing
