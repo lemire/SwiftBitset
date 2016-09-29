@@ -4,9 +4,7 @@
 <a href="https://github.com/apple/swift-package-manager"><img src="https://img.shields.io/badge/Swift%20Package%20Manager-compatible-brightgreen.svg"/></a>
 
 
-A bitset class in Swift for fast and concise set operations over integers.
-
-
+A bitset class in Swift for fast and concise set operations over integers. Works under both Linux and MacOS.
 
 ## Complete example for library users
 
@@ -93,6 +91,14 @@ For interactive use:
 ```bash
 swift build --configuration release
 swift -I .build/release -L .build/release -lBitset
+```
+
+## For XCode users (Mac Only)
+
+```bash
+$ swift package generate-xcodeproj
+generated: ./Bitset.xcodeproj
+$ open ./Bitset.xcodeproj
 ```
 
 ## Licensing
