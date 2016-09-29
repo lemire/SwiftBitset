@@ -93,7 +93,7 @@ swift build --configuration release
 swift -I .build/release -L .build/release -lBitset
 ```
 
-## For XCode users (Mac Only)
+## For Xcode users (Mac Only)
 
 ```bash
 $ swift package generate-xcodeproj
