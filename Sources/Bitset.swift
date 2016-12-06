@@ -97,7 +97,7 @@ public final class Bitset : Sequence, Equatable, CustomStringConvertible,
     var counter = 0;
     var hasPrevious = false;
     for val in self {
-      counter += 1;
+      counter = counter &+ 1;
       if hasPrevious {
         answer += ", ";
       } else {
@@ -123,7 +123,7 @@ public final class Bitset : Sequence, Equatable, CustomStringConvertible,
   public func count()->Int {
     var sum : Int = 0
     for w in data {
-      sum += Bitset.popcount(w) 
+      sum = sum &+ Bitset.popcount(w) 
     }
     return sum
   }
@@ -179,7 +179,7 @@ public final class Bitset : Sequence, Equatable, CustomStringConvertible,
   public func intersectionCount(_ other : Bitset) -> Int {
     let mincount = other.data.count < data.count ? other.data.count : data.count;
     var sum = 0;
-    for i in 0..<mincount { sum += Bitset.popcount( data[i] & other.data[i]) } 
+    for i in 0..<mincount { sum = sum &+ Bitset.popcount( data[i] & other.data[i]) } 
     return sum;
   }
 
@@ -202,15 +202,15 @@ public final class Bitset : Sequence, Equatable, CustomStringConvertible,
     let mincount = other.data.count < data.count ? other.data.count : data.count;
     var sum = 0
     for  i in 0..<mincount {
-      sum += Bitset.popcount(data[i] | other.data[i]) 
+      sum = sum &+ Bitset.popcount(data[i] | other.data[i]) 
     }
     if other.data.count > data.count {
       for i in mincount..<other.data.count {
-        sum += Bitset.popcount(other.data[i])
+        sum = sum &+ Bitset.popcount(other.data[i])
       }
     } else {
       for i in mincount..<data.count {
-        sum += Bitset.popcount(data[i])
+        sum = sum &+ Bitset.popcount(data[i])
       }
     }
     return sum;
@@ -235,15 +235,15 @@ public final class Bitset : Sequence, Equatable, CustomStringConvertible,
     let mincount = other.data.count < data.count ? other.data.count : data.count;
     var sum = 0
     for  i in 0..<mincount {
-      sum += Bitset.popcount(data[i] ^ other.data[i])
+      sum = sum &+ Bitset.popcount(data[i] ^ other.data[i])
     }
     if other.data.count > data.count {
       for i in mincount..<other.data.count {
-        sum += Bitset.popcount(other.data[i])
+        sum = sum &+ Bitset.popcount(other.data[i])
       }
     } else {
       for i in mincount..<data.count {
-        sum += Bitset.popcount(data[i])
+        sum = sum &+ Bitset.popcount(data[i])
       }
     }
     return sum;
@@ -263,10 +263,10 @@ public final class Bitset : Sequence, Equatable, CustomStringConvertible,
     let mincount = other.data.count < data.count ? other.data.count : data.count;
     var sum = 0
     for  i in 0..<mincount {
-      sum += Bitset.popcount( data[i] & ~other.data[i])
+      sum = sum &+ Bitset.popcount( data[i] & ~other.data[i])
     }
     for i in mincount..<data.count {
-      sum += Bitset.popcount(data[i])
+      sum = sum &+ Bitset.popcount(data[i])
     }
     return sum
   }
@@ -320,7 +320,7 @@ public final class Bitset : Sequence, Equatable, CustomStringConvertible,
   }
 
   func ensureCapacity(_ index : Int) {
-    let newcount = Bitset.logicalrightshift(x : index, s : 6) + 1;
+    let newcount = Bitset.logicalrightshift(x : index, s : 6) &+ 1;
     // calling data.reserveCapacity(newcount); is a really bad idea
     while data.count < newcount {
       data.append(0)
@@ -333,7 +333,7 @@ public final class Bitset : Sequence, Equatable, CustomStringConvertible,
 
   static let deBruijn = [ 0, 1, 56, 2, 57, 49, 28, 3, 61, 58, 42, 50, 38, 29, 17, 4, 62, 47, 59, 36, 45, 43, 51, 22, 53, 39, 33, 30, 24, 18, 12, 5, 63, 55, 48, 27, 60, 41, 37, 16, 46, 35, 44, 21, 52, 32, 23, 11, 54, 26, 40, 15, 34, 20, 31, 10, 25, 14, 19, 9, 13, 8, 7, 6, ]
 
-  static func trailingZeroes(_ v : UInt64)->Int {
+  static func trailingZeroes(_ v : UInt64)->Int { // should be obsolete once Swift has the appropriate intrinsics
     let ival = Int64(bitPattern:v)
     let lowbit = ival & (-ival);
     let lowbitmulti = UInt64(bitPattern:lowbit) &* 0x03f79d71b4ca8b09;
@@ -343,8 +343,8 @@ public final class Bitset : Sequence, Equatable, CustomStringConvertible,
   static func popcount(_ i : UInt64)->Int { // should be obsolete once Swift supports it natively
     var x = i;
     x -= (x >> 1) & 0x5555555555555555;
-    x = (x >> 2) & 0x3333333333333333 + x & 0x3333333333333333;
-    x += x >> 4;
+    x = (x >> 2) & 0x3333333333333333 &+ x & 0x3333333333333333;
+    x = x &+ ( x >> 4 );
     x &= 0x0f0f0f0f0f0f0f0f;
     x = x &* 0x0101010101010101;
     return Int(x >> 56)
@@ -379,7 +379,7 @@ public struct BitsetIterator: IteratorProtocol {
    }
 
    public mutating func next() -> Int? {
-     i += 1;
+     i = i &+ 1;
      var x = Bitset.logicalrightshift(x : i, s : 6);
      if x >= bitset.data.count {
        return nil
@@ -387,17 +387,17 @@ public struct BitsetIterator: IteratorProtocol {
      var w = bitset.data[x];
      w >>= UInt64(i & 63);
      if w != 0 {
-       i += Bitset.trailingZeroes(w);
+       i = i &+ Bitset.trailingZeroes(w);
        return i
      }
-     x += 1;
+     x = x &+ 1;
      while x < bitset.data.count {
        let w = bitset.data[x];
        if w != 0 {
-         i = x * 64 + Bitset.trailingZeroes(w);
+         i = x * 64 &+ Bitset.trailingZeroes(w);
          return i
        }
-       x += 1
+       x = x &+ 1
      }
      return nil
    }
