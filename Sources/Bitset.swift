@@ -123,7 +123,7 @@ public final class Bitset : Sequence, Equatable, CustomStringConvertible,
   public func count()->Int {
     var sum : Int = 0
     for w in data {
-      sum = sum &+ Bitset.popcount(w) 
+      sum = sum &+ Bitset.popcount(w)
     }
     return sum
   }
@@ -135,10 +135,9 @@ public final class Bitset : Sequence, Equatable, CustomStringConvertible,
   // add a value to the bitset, all values must be non-negative
   // adding the value i to the bitset will cause the use of least (i+8)/8 bytes
   public func add(_ i : Int) {
-    let index = Bitset.logicalrightshift(x : i, s : 6);
+    let index = i >> 6;
     if index >= data.count { ensureCapacity(i) }
-    let shiftamount = UInt64(i & 63);
-    data[index] |= 1 << shiftamount
+    data[index] |= 1 << (UInt64(i & 63))
   }
 
   // add all the values  to the bitset
@@ -152,11 +151,9 @@ public final class Bitset : Sequence, Equatable, CustomStringConvertible,
 
   // check that a value is in the bitset, all values must be non-negative
   public func contains(_ i : Int)->Bool {
-    let index = Bitset.logicalrightshift(x : i, s : 6);
+    let index = i >> 6;
     if index >= data.count { return false }
-    let shiftamount = UInt64(i & 63);
-    let shiftedbit = 1 << shiftamount;
-    return data[index] & shiftedbit != 0
+    return data[index] & (1 << (UInt64(i & 63))) != 0
   }
 
   public subscript(i: Int) -> Bool {
@@ -179,7 +176,7 @@ public final class Bitset : Sequence, Equatable, CustomStringConvertible,
   public func intersectionCount(_ other : Bitset) -> Int {
     let mincount = other.data.count < data.count ? other.data.count : data.count;
     var sum = 0;
-    for i in 0..<mincount { sum = sum &+ Bitset.popcount( data[i] & other.data[i]) } 
+    for i in 0..<mincount { sum = sum &+ Bitset.popcount( data[i] & other.data[i]) }
     return sum;
   }
 
@@ -190,7 +187,7 @@ public final class Bitset : Sequence, Equatable, CustomStringConvertible,
       data[i] |= other.data[i]
     }
     if other.data.count > data.count {
-      data.reserveCapacity(other.data.count) 
+      data.reserveCapacity(other.data.count)
       for i in mincount..<other.data.count {
         data.append(other.data[i])
       }
@@ -202,7 +199,7 @@ public final class Bitset : Sequence, Equatable, CustomStringConvertible,
     let mincount = other.data.count < data.count ? other.data.count : data.count;
     var sum = 0
     for  i in 0..<mincount {
-      sum = sum &+ Bitset.popcount(data[i] | other.data[i]) 
+      sum = sum &+ Bitset.popcount(data[i] | other.data[i])
     }
     if other.data.count > data.count {
       for i in mincount..<other.data.count {
@@ -223,7 +220,7 @@ public final class Bitset : Sequence, Equatable, CustomStringConvertible,
       data[i] ^= other.data[i]
     }
     if other.data.count > data.count {
-      data.reserveCapacity(other.data.count) 
+      data.reserveCapacity(other.data.count)
       for i in mincount..<other.data.count {
         data.append(other.data[i])
       }
@@ -273,26 +270,20 @@ public final class Bitset : Sequence, Equatable, CustomStringConvertible,
 
   // remove a value, must be non-negative
   public func remove(_ i : Int) {
-    let index = Bitset.logicalrightshift(x : i, s : 6);
+    let index = i >> 6;
     if index < data.count {
-        let shiftamount = UInt64(i & 63);
-        let shiftedbit = 1 << shiftamount;
-        let negshiftedbit = ~shiftedbit;
-        data[index] &= negshiftedbit
+        data[index] &= ~(1 << UInt64(i & 63))
       }
   }
 
   // remove a value, if it is present it is removed, otherwise it is added, must be non-negative
   public func flip(_ i : Int) {
-    let index = Bitset.logicalrightshift(x : i, s : 6);
+    let index = i >> 6;
     if index < data.count {
-        let shiftamount = UInt64(i & 63);
-        let shiftedbit = 1 << shiftamount;
-        data[index] ^= shiftedbit;
+        data[index] ^= 1 << UInt64(i & 63);
     } else {
         ensureCapacity(i);
-        let shiftamount : UInt64 = UInt64(i & 63);
-        data[index] |= 1 << shiftamount
+        data[index] |= 1 << UInt64(i & 63)
     }
   }
 
@@ -320,15 +311,11 @@ public final class Bitset : Sequence, Equatable, CustomStringConvertible,
   }
 
   func ensureCapacity(_ index : Int) {
-    let newcount = Bitset.logicalrightshift(x : index, s : 6) &+ 1;
+    let newcount = ( index >> 6 ) &+ 1;
     // calling data.reserveCapacity(newcount); is a really bad idea
     while data.count < newcount {
       data.append(0)
     }
-  }
-
-  static func logicalrightshift(x : Int, s : Int)->Int {
-    return Int(UInt(x) >> UInt(s))
   }
 
   static let deBruijn = [ 0, 1, 56, 2, 57, 49, 28, 3, 61, 58, 42, 50, 38, 29, 17, 4, 62, 47, 59, 36, 45, 43, 51, 22, 53, 39, 33, 30, 24, 18, 12, 5, 63, 55, 48, 27, 60, 41, 37, 16, 46, 35, 44, 21, 52, 32, 23, 11, 54, 26, 40, 15, 34, 20, 31, 10, 25, 14, 19, 9, 13, 8, 7, 6, ]
@@ -337,17 +324,17 @@ public final class Bitset : Sequence, Equatable, CustomStringConvertible,
     let ival = Int64(bitPattern:v)
     let lowbit = ival & (-ival);
     let lowbitmulti = UInt64(bitPattern:lowbit) &* 0x03f79d71b4ca8b09;
-    return deBruijn[Int(lowbitmulti >> 58)]
+    return deBruijn[Int(truncatingBitPattern:(lowbitmulti >> 58))]
   }
 
-  static func popcount(_ i : UInt64)->Int { // should be obsolete once Swift supports it natively
+  static func popcount(_ i : UInt64)->Int { // should be obsolete once Swift supports it natively (popcount)
     var x = i;
     x -= (x >> 1) & 0x5555555555555555;
     x = (x >> 2) & 0x3333333333333333 &+ x & 0x3333333333333333;
     x = x &+ ( x >> 4 );
     x &= 0x0f0f0f0f0f0f0f0f;
     x = x &* 0x0101010101010101;
-    return Int(x >> 56)
+    return Int(truncatingBitPattern:(x >> 56))
   }
 
   // checks whether the two bitsets have the same content
@@ -380,7 +367,7 @@ public struct BitsetIterator: IteratorProtocol {
 
    public mutating func next() -> Int? {
      i = i &+ 1;
-     var x = Bitset.logicalrightshift(x : i, s : 6);
+     var x = i >> 6
      if x >= bitset.data.count {
        return nil
      }
@@ -394,7 +381,7 @@ public struct BitsetIterator: IteratorProtocol {
      while x < bitset.data.count {
        let w = bitset.data[x];
        if w != 0 {
-         i = x * 64 &+ Bitset.trailingZeroes(w);
+         i = x &* 64 &+ Bitset.trailingZeroes(w);
          return i
        }
        x = x &+ 1
