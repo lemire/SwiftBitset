@@ -1,6 +1,17 @@
 infix operator &^;// andNot
 infix operator &^=;// andNot
 
+private extension Int64 {
+    func toUInt64() -> UInt64 { return UInt64(bitPattern:self) }
+    func toInt() -> Int { return Int(truncatingBitPattern:self) }
+}
+
+private extension UInt64 {
+    func toInt64() -> Int64 { return Int64(bitPattern:self) }
+    func toInt() -> Int { return Int(truncatingBitPattern:self) }
+}
+
+
 // a class that can be used as an efficient set container for non-negative integers
 public final class Bitset : Sequence, Equatable, CustomStringConvertible,
                            Hashable, ExpressibleByArrayLiteral {
@@ -86,7 +97,7 @@ public final class Bitset : Sequence, Equatable, CustomStringConvertible,
       hash = hash &* 0xff51afd7ed558ccd
       hash = hash ^ ( hash >> 33)
       hash = hash &* 0xc4ceb9fe1a85ec53
-      return Int(truncatingBitPattern:hash);
+      return hash.toInt();
   }
 
 
@@ -321,10 +332,10 @@ public final class Bitset : Sequence, Equatable, CustomStringConvertible,
   static let deBruijn = [ 0, 1, 56, 2, 57, 49, 28, 3, 61, 58, 42, 50, 38, 29, 17, 4, 62, 47, 59, 36, 45, 43, 51, 22, 53, 39, 33, 30, 24, 18, 12, 5, 63, 55, 48, 27, 60, 41, 37, 16, 46, 35, 44, 21, 52, 32, 23, 11, 54, 26, 40, 15, 34, 20, 31, 10, 25, 14, 19, 9, 13, 8, 7, 6, ]
 
   static func trailingZeroes(_ v : UInt64)->Int { // should be obsolete once Swift has the appropriate intrinsics
-    let ival = Int64(bitPattern:v)
+    let ival = v.toInt64()
     let lowbit = ival & (-ival);
-    let lowbitmulti = UInt64(bitPattern:lowbit) &* 0x03f79d71b4ca8b09;
-    return deBruijn[Int(truncatingBitPattern:(lowbitmulti >> 58))]
+    let lowbitmulti = lowbit.toUInt64() &* 0x03f79d71b4ca8b09;
+    return deBruijn[(lowbitmulti >> 58).toInt()]
   }
 
   static func popcount(_ i : UInt64)->Int { // should be obsolete once Swift supports it natively (popcount)
@@ -334,7 +345,7 @@ public final class Bitset : Sequence, Equatable, CustomStringConvertible,
     x = x &+ ( x >> 4 );
     x &= 0x0f0f0f0f0f0f0f0f;
     x = x &* 0x0101010101010101;
-    return Int(truncatingBitPattern:(x >> 56))
+    return (x >> 56).toInt()
   }
 
   // checks whether the two bitsets have the same content
