@@ -5,6 +5,7 @@
 
 
 A bitset class in Swift for fast and concise set operations over integers. Works under both Linux and MacOS.
+It is engineered to be really fast, on par with portable C/C++ implementations.
 
 ## Complete example for library users
 
