@@ -43,7 +43,7 @@ class BitsetTests : XCTestCase {
     }
     let b2 = Bitset();
     for i in stride(from: 0, to: 1_000_000_000, by: 99){
-          b1.add(i)
+          b2.add(i)
     }
     var sum = 0
     measure() {
@@ -52,7 +52,7 @@ class BitsetTests : XCTestCase {
       sum += z.count();
     }
   }
-  
+
   func testSetGet() {
     let b = Bitset();
     XCTAssertEqual(b.isEmpty(), true, "Bad empty");
