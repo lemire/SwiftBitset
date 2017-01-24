@@ -88,6 +88,14 @@ swift build -Xcc -march=native --configuration release
 swift test # optional
 ```
 
+To dissamble a function...
+
+```bash
+swift build -Xcc -march=native --configuration release
+lldb ./.build/release/Bitset.build/Bitset.swift.o
+disassemble -n intersectionCount
+```
+
 For interactive use:
 ```bash
 swift build -Xcc -march=native --configuration release
