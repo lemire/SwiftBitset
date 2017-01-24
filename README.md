@@ -45,7 +45,7 @@ for i in b1 {
 You can run your example as follows:
 
 ```bash    
-swift build  -Xcc -march=native  --configuration
+swift build  -Xcc -march=native  --configuration release
 .build/release/fun
 ```
 
