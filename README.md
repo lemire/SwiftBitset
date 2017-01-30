@@ -5,6 +5,7 @@
 
 
 A bitset class in Swift for fast and concise set operations over integers. Works under both Linux and MacOS.
+It is engineered to be really fast, on par with portable C/C++ implementations.
 
 It can be orders of magnitude faster than an IndexSet:
 
@@ -59,7 +60,7 @@ for i in b1 {
 You can run your example as follows:
 
 ```bash    
-swift build  -Xcc -march=native  --configuration
+swift build  -Xcc -march=native  --configuration release
 .build/release/fun
 ```
 
@@ -100,6 +101,14 @@ b1 ^= b2;// inplace symmetric difference
 ```bash
 swift build -Xcc -march=native --configuration release
 swift test # optional
+```
+
+To dissamble a function...
+
+```bash
+swift build -Xcc -march=native --configuration release
+lldb ./.build/release/Bitset.build/Bitset.swift.o
+disassemble -n intersectionCount
 ```
 
 For interactive use:

@@ -43,7 +43,7 @@ class BitsetTests : XCTestCase {
     }
     let b2 = Bitset();
     for i in stride(from: 0, to: 1_000_000_000, by: 99){
-          b1.add(i)
+          b2.add(i)
     }
     var sum = 0
     measure() {
@@ -52,7 +52,7 @@ class BitsetTests : XCTestCase {
       sum += z.count();
     }
   }
-  
+
   func testSetGet() {
     let b = Bitset();
     XCTAssertEqual(b.isEmpty(), true, "Bad empty");
@@ -70,7 +70,7 @@ class BitsetTests : XCTestCase {
 
   func testLiteral() {
     let b1 : Bitset = [1, 2, 3];
-    let b2 = Bitset (1,2,3);
+    let b2 = Bitset (1,2,3)
     XCTAssertEqual(b1, b2, "Bad litteral");
     XCTAssertEqual(b1.contains(1), true, "Bad set/get");
     XCTAssertEqual(b1.contains(2), true, "Bad set/get");
@@ -111,9 +111,13 @@ class BitsetTests : XCTestCase {
 
   func testOperator1() {
     let b1 = Bitset(1, 4, 10, 1000, 10000);
+    print(b1)
     let b2 = Bitset(1, 3, 10, 1000);
+    print(b2)
     let B1 = Bitset(b1);
+    print(B1)
     let B2 = Bitset(b2);
+    print(B2)
 
     b2 ^= b1
     B2.symmetricDifference(B1)
@@ -216,9 +220,12 @@ class BitsetTests : XCTestCase {
     XCTAssertEqual(b2, bexpected, "Bad example");
     bexpected.intersection(b1);
     XCTAssertEqual(b1, bexpected, "Bad example");
+    var count = 0
     for i in b1 {
        print(i)
+       count += 1
     }
+    XCTAssertEqual(b1.count(), count, "Bad example");
      // will print 1 4 10 1000 10000
     let _ = b1 & b2;// intersection
     let _ = b1 | b2;// union
