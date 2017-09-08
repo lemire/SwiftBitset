@@ -50,7 +50,7 @@ public final class Bitset : Sequence, Equatable, CustomStringConvertible,
       for k in 0..<wordcount {
         data[k] = 0
       }
-      for i in allints { add(i) }
+      addMany(allints)
   }
 
   // initializing from array literal
@@ -195,6 +195,16 @@ public final class Bitset : Sequence, Equatable, CustomStringConvertible,
     ensureIndexCapacity(mymax);
     for i in allints { add(i) }
   }
+
+  // add all the values  to the bitset
+  // adding the value i to the bitset will cause the use of least (i+8)/8 bytes
+  public func addMany(_ allints : [Int]) {
+    var mymax = 0;
+    for i in allints { mymax = mymax < i ? i : mymax }
+    ensureIndexCapacity(mymax);
+    for i in allints { add(i) }
+  }
+
 
   // check that a value is in the bitset, all values must be non-negative
   public func contains(_ i : Int)->Bool {
