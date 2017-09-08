@@ -7,6 +7,21 @@
 A bitset class in Swift for fast and concise set operations over integers. Works under both Linux and MacOS.
 It is engineered to be really fast, on par with portable C/C++ implementations.
 
+It can be orders of magnitude faster than an IndexSet:
+
+```
+testAddPerformance  12.492364  ms
+testIndexSetAddPerformance  513.132274  ms
+
+testIteratorPerformance  4.384031  ms
+testIndexSetIteratorPerformance  283.128735  ms
+
+testIntersectionPerformance  3.188146  ms
+testIndexSetIntersectionPerformance  8843.176816  ms
+```
+
+See https://github.com/lemire/SwiftBitsetBenchmark
+
 ## Complete example for library users
 
 Create a directory where you will create your application:
