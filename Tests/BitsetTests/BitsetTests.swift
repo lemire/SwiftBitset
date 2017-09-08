@@ -29,11 +29,23 @@ class BitsetTests : XCTestCase {
     var sum = 0;
     measure() {
       for _ in  b1 {
-        sum += 1;
+        sum = sum &+ 1;
       }
     }
   }
 
+  func testForEachPerformance() {
+    let b1 = Bitset();
+    for i in stride(from: 0, to: 100_000_000, by: 100){
+          b1.add(i)
+    }
+    var sum = 0;
+    measure() {
+      b1.forEach({ value in 
+        sum = sum &+ 1
+      })
+    }
+  }
 
 
   func testUnionPerformance() {

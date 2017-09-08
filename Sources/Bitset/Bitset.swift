@@ -432,7 +432,6 @@ public final class Bitset : Sequence, Equatable, CustomStringConvertible,
           }
         return true
   }
-
 }
 public struct BitsetIterator: IteratorProtocol {
    let bitset: Bitset

@@ -111,6 +111,11 @@ lldb ./.build/release/Bitset.build/Bitset.swift.o
 disassemble -n intersectionCount
 ```
 
+To benchmark from the command line:
+```
+swift test -Xswiftc -Ounchecked -s BitsetTests.BitsetTests/testForEachPerformance
+```
+
 For interactive use:
 ```bash
 swift build -Xcc -march=native --configuration release
