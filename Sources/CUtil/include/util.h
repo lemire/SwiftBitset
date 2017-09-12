@@ -4,7 +4,7 @@
 #error This code assumes  64-bit long longs (by use of the GCC intrinsics). Your system is not currently supported.
 #endif
 
-#if  defined(__x86_64__) || defined(_M_X64)
+#if defined(__x86_64__) || defined(_M_X64)
 // we have an x64 processor
 // we include the intrinsic header
 #ifdef _MSC_VER
@@ -18,22 +18,20 @@
 
 static inline int hamming(uint64_t x) {
 #if defined(__POPCNT__)
-    return _mm_popcnt_u64(x);
+  return _mm_popcnt_u64(x);
 #else
-    // won't work under visual studio, but hopeful we have _mm_popcnt_u64 in
-    // many cases
-    return __builtin_popcountll(x);
+  // won't work under visual studio, but hopeful we have _mm_popcnt_u64 in
+  // many cases
+  return __builtin_popcountll(x);
 #endif
 }
 
 static inline int trailing(uint64_t x) {
 #if defined(__BMI1__)
-    return _mm_tzcnt_64(x);
+  return _mm_tzcnt_64(x);
 #else
-    // won't work under visual studio, but hopeful we have _mm_popcnt_u64 in
-    // many cases
-    return __builtin_ctzll(x);
+  // won't work under visual studio, but hopeful we have _mm_popcnt_u64 in
+  // many cases
+  return __builtin_ctzll(x);
 #endif
 }
-
-
