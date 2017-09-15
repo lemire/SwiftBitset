@@ -136,25 +136,11 @@ public final class Bitset: Sequence, Equatable, CustomStringConvertible,
 
   // presents a string representation of the bitset
   public var description: String {
-    var answer = "{"
-    var counter = 0
-    var hasPrevious = false
-    for val in self {
-      counter = counter &+ 1
-      if hasPrevious {
-        answer += ", "
-      } else {
-        hasPrevious = true
-      }
-      if counter == 100 {
-        answer += "..."
-        break
-      } else {
-        answer += String(val)
-      }
+    var ret = prefix(100).map { $0.description }.joined(separator: ", ")
+    if count() >= 100 {
+        ret.append(", ...")
     }
-    answer += "}"
-    return answer
+    return "{\(ret)}"
   }
 
   // create an iterator over the values contained in the bitset
