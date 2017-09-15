@@ -1,6 +1,6 @@
 # SwiftBitset
 
-<a href="https://developer.apple.com/swift"><img src="https://img.shields.io/badge/Swift3-compatible-orange.svg?style=flat" alt="Swift 3 compatible" /></a>
+<a href="https://developer.apple.com/swift"><img src="https://img.shields.io/badge/Swift4-compatible-green.svg?style=flat" alt="Swift 4 compatible" /></a>
 <a href="https://github.com/apple/swift-package-manager"><img src="https://img.shields.io/badge/Swift%20Package%20Manager-compatible-brightgreen.svg"/></a>
 
 
@@ -10,14 +10,22 @@ It is engineered to be really fast, on par with portable C/C++ implementations.
 It can be orders of magnitude faster than an IndexSet:
 
 ```
-testAddPerformance  12.492364  ms
-testIndexSetAddPerformance  513.132274  ms
+$ git clone https://github.com/lemire/SwiftBitsetBenchmark.git
+$ cd SwiftBitsetBenchmark
+$ swift build  -Xcc -march=native  --configuration release
 
-testIteratorPerformance  4.384031  ms
-testIndexSetIteratorPerformance  283.128735  ms
+$ .build/release/SwiftBitsetBenchmark
+testAddPerformance  10.693318  ms
+testIndexSetAddPerformance  231.737616  ms
 
-testIntersectionPerformance  3.188146  ms
-testIndexSetIntersectionPerformance  8843.176816  ms
+testCountPerformance  0.617098  ms
+testIndexSetCountPerformance  0.007483  ms
+
+testIteratorPerformance  5.503873  ms
+testIndexSetIteratorPerformance  234.289692  ms
+
+testIntersectionPerformance  3.157883  ms
+testIndexSetIntersectionPerformance  2774.959423  ms
 ```
 
 See https://github.com/lemire/SwiftBitsetBenchmark
