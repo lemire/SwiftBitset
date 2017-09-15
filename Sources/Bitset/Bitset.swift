@@ -1,4 +1,4 @@
-import CUtil
+
 infix operator &^;// andNot
 infix operator &^=;// andNot
 
@@ -136,25 +136,11 @@ public final class Bitset: Sequence, Equatable, CustomStringConvertible,
 
   // presents a string representation of the bitset
   public var description: String {
-    var answer = "{"
-    var counter = 0
-    var hasPrevious = false
-    for val in self {
-      counter = counter &+ 1
-      if hasPrevious {
-        answer += ", "
-      } else {
-        hasPrevious = true
-      }
-      if counter == 100 {
-        answer += "..."
-        break
-      } else {
-        answer += String(val)
-      }
+    var ret = prefix(100).map { $0.description }.joined(separator: ", ")
+    if count() >= 100 {
+        ret.append(", ...")
     }
-    answer += "}"
-    return answer
+    return "{\(ret)}"
   }
 
   // create an iterator over the values contained in the bitset
@@ -167,7 +153,7 @@ public final class Bitset: Sequence, Equatable, CustomStringConvertible,
     var sum: Int = 0
     for i in 0..<wordcount {
       let w = data[i]
-      sum = sum &+ Bitset.popcount(w)
+      sum = sum &+ w.nonzeroBitCount
     }
     return sum
   }
@@ -225,22 +211,22 @@ public final class Bitset: Sequence, Equatable, CustomStringConvertible,
 
   // compute the intersection (in place) with another bitset
   public func intersection(_ other: Bitset) {
-    let mincount = other.wordcount < self.wordcount ? other.wordcount : self.wordcount
+    let mincount = Swift.min(self.wordcount, other.wordcount)
     for i in 0..<mincount { data[i] &= other.data[i] }
     for i in mincount..<self.wordcount { data[i] = 0 }
   }
 
   // compute the size of the intersection with another bitset
   public func intersectionCount(_ other: Bitset) -> Int {
-    let mincount = other.wordcount < self.wordcount ? other.wordcount : self.wordcount
+    let mincount = Swift.min(self.wordcount, other.wordcount)
     var sum = 0
-    for i in 0..<mincount { sum = sum &+ Bitset.popcount( data[i] & other.data[i]) }
+    for i in 0..<mincount { sum = sum &+ ( data[i] & other.data[i]).nonzeroBitCount }
     return sum
   }
 
   // compute the union (in place) with another bitset
   public func union(_ other: Bitset) {
-    let mincount = other.wordcount < self.wordcount ? other.wordcount : self.wordcount
+    let mincount = Swift.min(self.wordcount, other.wordcount)
     for  i in 0..<mincount {
       data[i] |= other.data[i]
     }
@@ -255,18 +241,18 @@ public final class Bitset: Sequence, Equatable, CustomStringConvertible,
 
   // compute the size union  with another bitset
   public func unionCount(_ other: Bitset) -> Int {
-    let mincount = other.wordcount < self.wordcount ? other.wordcount : self.wordcount
+    let mincount = Swift.min(self.wordcount, other.wordcount)
     var sum = 0
     for  i in 0..<mincount {
-      sum = sum &+ Bitset.popcount(data[i] | other.data[i])
+      sum = sum &+ (data[i] | other.data[i]).nonzeroBitCount
     }
     if other.wordcount > self.wordcount {
       for i in mincount..<other.wordcount {
-        sum = sum &+ Bitset.popcount(other.data[i])
+        sum = sum &+ (other.data[i]).nonzeroBitCount
       }
     } else {
       for i in mincount..<self.wordcount {
-        sum = sum &+ Bitset.popcount(data[i])
+        sum = sum &+ (data[i]).nonzeroBitCount
       }
     }
     return sum
@@ -274,7 +260,7 @@ public final class Bitset: Sequence, Equatable, CustomStringConvertible,
 
   // compute the symmetric difference (in place) with another bitset
   public func symmetricDifference(_ other: Bitset) {
-    let mincount = other.wordcount < self.wordcount ? other.wordcount : self.wordcount
+    let mincount = Swift.min(self.wordcount, other.wordcount)
     for  i in 0..<mincount {
       data[i] ^= other.data[i]
     }
@@ -289,18 +275,18 @@ public final class Bitset: Sequence, Equatable, CustomStringConvertible,
 
   // compute the size union  with another bitset
   public func symmetricDifferenceCount(_ other: Bitset) -> Int {
-    let mincount = other.wordcount < self.wordcount ? other.wordcount : self.wordcount
+    let mincount = Swift.min(self.wordcount, other.wordcount)
     var sum = 0
     for  i in 0..<mincount {
-      sum = sum &+ Bitset.popcount(data[i] ^ other.data[i])
+      sum = sum &+ (data[i] ^ other.data[i]).nonzeroBitCount
     }
     if other.wordcount > self.wordcount {
       for i in mincount..<other.wordcount {
-        sum = sum &+ Bitset.popcount(other.data[i])
+        sum = sum &+ other.data[i].nonzeroBitCount
       }
     } else {
       for i in mincount..<self.wordcount {
-        sum = sum &+ Bitset.popcount(data[i])
+        sum = sum &+ (data[i]).nonzeroBitCount
       }
     }
     return sum
@@ -308,7 +294,7 @@ public final class Bitset: Sequence, Equatable, CustomStringConvertible,
 
   // compute the difference (in place) with another bitset
   public func difference(_ other: Bitset) {
-    let mincount = other.wordcount < self.wordcount ? other.wordcount : self.wordcount
+    let mincount = Swift.min(self.wordcount, other.wordcount)
     for  i in 0..<mincount {
       data[i] &= ~other.data[i]
     }
@@ -316,13 +302,13 @@ public final class Bitset: Sequence, Equatable, CustomStringConvertible,
 
   // compute the size of the difference with another bitset
   public func differenceCount(_ other: Bitset) -> Int {
-    let mincount = other.wordcount < self.wordcount ? other.wordcount : self.wordcount
+    let mincount = Swift.min(self.wordcount, other.wordcount)
     var sum = 0
     for  i in 0..<mincount {
-      sum = sum &+ Bitset.popcount( data[i] & ~other.data[i])
+      sum = sum &+ ( data[i] & ~other.data[i]).nonzeroBitCount
     }
     for i in mincount..<self.wordcount {
-      sum = sum &+ Bitset.popcount(data[i])
+      sum = sum &+ (data[i]).nonzeroBitCount
     }
     return sum
   }
@@ -409,16 +395,6 @@ public final class Bitset: Sequence, Equatable, CustomStringConvertible,
     }
   }
 
-  static func trailingZeroes(_ intvalue: UInt64) -> Int {
-    // should be obsolete once Swift has the appropriate intrinsics
-    return Int(CUtil.trailing(intvalue))
-    /* We call a C function as a poor's man intrinsic. */
-  }
-
-  static func popcount(_ intvalue: UInt64) -> Int { // should be obsolete once Swift supports it natively (popcount)
-    return Int(CUtil.hamming(intvalue)) /* We call a C function as a poor's man intrinsic. */
-  }
-
   // checks whether the two bitsets have the same content
   public static func == (lhs: Bitset, rhs: Bitset) -> Bool {
     if lhs.wordcount > rhs.wordcount {
@@ -430,8 +406,7 @@ public final class Bitset: Sequence, Equatable, CustomStringConvertible,
               return false
             }
     }
-    let mincount =
-        lhs.wordcount < rhs.wordcount ? lhs.wordcount : rhs.wordcount
+    let mincount = Swift.min(rhs.wordcount, lhs.wordcount)
         for  i in 0..<mincount where rhs.data[i] != lhs.data[i] {
             return false
           }
@@ -455,14 +430,14 @@ public struct BitsetIterator: IteratorProtocol {
      var w = bitset.data[x]
      w >>= UInt64(value & 63)
      if w != 0 {
-       value = value &+ Bitset.trailingZeroes(w)
+       value = value &+ w.trailingZeroBitCount
        return value
      }
      x = x &+ 1
      while x < bitset.wordcount {
        let w = bitset.data[x]
        if w != 0 {
-         value = x &* 64 &+ Bitset.trailingZeroes(w)
+         value = x &* 64 &+ w.trailingZeroBitCount
          return value
        }
        x = x &+ 1
