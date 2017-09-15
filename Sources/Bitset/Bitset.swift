@@ -225,14 +225,14 @@ public final class Bitset: Sequence, Equatable, CustomStringConvertible,
 
   // compute the intersection (in place) with another bitset
   public func intersection(_ other: Bitset) {
-    let mincount = other.wordcount < self.wordcount ? other.wordcount : self.wordcount
+    let mincount = Swift.min(self.wordcount, other.wordcount)
     for i in 0..<mincount { data[i] &= other.data[i] }
     for i in mincount..<self.wordcount { data[i] = 0 }
   }
 
   // compute the size of the intersection with another bitset
   public func intersectionCount(_ other: Bitset) -> Int {
-    let mincount = other.wordcount < self.wordcount ? other.wordcount : self.wordcount
+    let mincount = Swift.min(self.wordcount, other.wordcount)
     var sum = 0
     for i in 0..<mincount { sum = sum &+ ( data[i] & other.data[i]).nonzeroBitCount }
     return sum
@@ -240,7 +240,7 @@ public final class Bitset: Sequence, Equatable, CustomStringConvertible,
 
   // compute the union (in place) with another bitset
   public func union(_ other: Bitset) {
-    let mincount = other.wordcount < self.wordcount ? other.wordcount : self.wordcount
+    let mincount = Swift.min(self.wordcount, other.wordcount)
     for  i in 0..<mincount {
       data[i] |= other.data[i]
     }
@@ -255,7 +255,7 @@ public final class Bitset: Sequence, Equatable, CustomStringConvertible,
 
   // compute the size union  with another bitset
   public func unionCount(_ other: Bitset) -> Int {
-    let mincount = other.wordcount < self.wordcount ? other.wordcount : self.wordcount
+    let mincount = Swift.min(self.wordcount, other.wordcount)
     var sum = 0
     for  i in 0..<mincount {
       sum = sum &+ (data[i] | other.data[i]).nonzeroBitCount
@@ -274,7 +274,7 @@ public final class Bitset: Sequence, Equatable, CustomStringConvertible,
 
   // compute the symmetric difference (in place) with another bitset
   public func symmetricDifference(_ other: Bitset) {
-    let mincount = other.wordcount < self.wordcount ? other.wordcount : self.wordcount
+    let mincount = Swift.min(self.wordcount, other.wordcount)
     for  i in 0..<mincount {
       data[i] ^= other.data[i]
     }
@@ -289,7 +289,7 @@ public final class Bitset: Sequence, Equatable, CustomStringConvertible,
 
   // compute the size union  with another bitset
   public func symmetricDifferenceCount(_ other: Bitset) -> Int {
-    let mincount = other.wordcount < self.wordcount ? other.wordcount : self.wordcount
+    let mincount = Swift.min(self.wordcount, other.wordcount)
     var sum = 0
     for  i in 0..<mincount {
       sum = sum &+ (data[i] ^ other.data[i]).nonzeroBitCount
@@ -308,7 +308,7 @@ public final class Bitset: Sequence, Equatable, CustomStringConvertible,
 
   // compute the difference (in place) with another bitset
   public func difference(_ other: Bitset) {
-    let mincount = other.wordcount < self.wordcount ? other.wordcount : self.wordcount
+    let mincount = Swift.min(self.wordcount, other.wordcount)
     for  i in 0..<mincount {
       data[i] &= ~other.data[i]
     }
@@ -316,7 +316,7 @@ public final class Bitset: Sequence, Equatable, CustomStringConvertible,
 
   // compute the size of the difference with another bitset
   public func differenceCount(_ other: Bitset) -> Int {
-    let mincount = other.wordcount < self.wordcount ? other.wordcount : self.wordcount
+    let mincount = Swift.min(self.wordcount, other.wordcount)
     var sum = 0
     for  i in 0..<mincount {
       sum = sum &+ ( data[i] & ~other.data[i]).nonzeroBitCount
@@ -420,8 +420,7 @@ public final class Bitset: Sequence, Equatable, CustomStringConvertible,
               return false
             }
     }
-    let mincount =
-        lhs.wordcount < rhs.wordcount ? lhs.wordcount : rhs.wordcount
+    let mincount = Swift.min(rhs.wordcount, lhs.wordcount)
         for  i in 0..<mincount where rhs.data[i] != lhs.data[i] {
             return false
           }
