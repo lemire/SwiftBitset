@@ -14,7 +14,7 @@ $ git clone https://github.com/lemire/SwiftBitsetBenchmark.git
 $ cd SwiftBitsetBenchmark
 $ swift build  -Xcc -march=native  --configuration release
 
-$ .build/release/SwiftBitsetBenchmark
+$(swift build   --configuration release --show-bin-path)/SwiftBitsetBenchmark
 testAddPerformance  10.693318  ms
 testIndexSetAddPerformance  231.737616  ms
 
@@ -74,7 +74,7 @@ You can run your example as follows:
 
 ```bash    
 swift build  -Xcc -march=native  --configuration release
-.build/release/fun
+$(swift build   --configuration release  --show-bin-path)/fun
 ```
 
 
