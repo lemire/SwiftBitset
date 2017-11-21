@@ -49,7 +49,7 @@ import PackageDescription
 let package = Package(
     name: "fun",
     dependencies: [
-   .Package(url: "https://github.com/lemire/SwiftBitset.git",  majorVersion: 0)
+   .package(url: "https://github.com/lemire/SwiftBitset.git",  from: "0.3.0")
     ]
 )
 ```
