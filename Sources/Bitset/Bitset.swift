@@ -4,12 +4,12 @@ infix operator &^=;// andNot
 
 private extension Int64 {
     func toUInt64() -> UInt64 { return UInt64(bitPattern:self) }
-    func toInt() -> Int { return Int(truncatingBitPattern:self) }
+    func toInt() -> Int { return Int(truncatingIfNeeded:self) }
 }
 
 private extension UInt64 {
     func toInt64() -> Int64 { return Int64(bitPattern:self) }
-    func toInt() -> Int { return Int(truncatingBitPattern:self) }
+    func toInt() -> Int { return Int(truncatingIfNeeded:self) }
 }
 
 // a class that can be used as an efficient set container for non-negative integers
