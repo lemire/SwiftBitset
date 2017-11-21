@@ -14,7 +14,7 @@ $ git clone https://github.com/lemire/SwiftBitsetBenchmark.git
 $ cd SwiftBitsetBenchmark
 $ swift build  -Xcc -march=native  --configuration release
 
-$(swift build   --configuration release --show-bin-path)/SwiftBitsetBenchmark
+$ $(swift build   --configuration release --show-bin-path)/SwiftBitsetBenchmark
 testAddPerformance  10.693318  ms
 testIndexSetAddPerformance  231.737616  ms
 
