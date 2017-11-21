@@ -1,9 +1,10 @@
+// swift-tools-version:4.0
 import PackageDescription
 
 let package = Package(
     name: "SwiftBitset",
-    swiftLanguageVersions: [4],
     targets: [
-        Target(name: "Bitset", dependencies: [])
+        .target(name: "Bitset", dependencies: []),
+        .testTarget(name: "BitsetTests", dependencies: ["Bitset"])
     ]
 )
