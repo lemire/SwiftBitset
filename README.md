@@ -40,7 +40,7 @@ cd fun
 swift package init --type executable
 ```
 
-Then edit ``Package.swift`` so that it reads:
+Then edit ``Package.swift`` so that it reads something like this:
 
 
 ```swift
@@ -50,11 +50,12 @@ let package = Package(
     name: "fun",
     dependencies: [
    .package(url: "https://github.com/lemire/SwiftBitset.git",  from: "0.3.0")
-    ]
+    ],
+    ...
 )
 ```
 
-Edit ``Sources/main.swift`` so that it looks something like this :
+Edit ``main.swift`` (in Sources) so that it looks something like this :
 
 ```swift
 import Bitset;
