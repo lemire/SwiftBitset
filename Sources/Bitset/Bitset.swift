@@ -355,7 +355,7 @@ public final class Bitset: Sequence, Equatable, CustomStringConvertible,
   public func removeAll(keepingCapacity keepCapacity: Bool = false) {
     wordcount = 0
     if !keepCapacity {
-      data.deallocate(capacity: self.capacity)
+      data.deallocate()
       capacity = 8 // reset to some default
       data = UnsafeMutablePointer<UInt64>.allocate(capacity:capacity)
     }
@@ -384,7 +384,7 @@ public final class Bitset: Sequence, Equatable, CustomStringConvertible,
     for i in 0..<self.wordcount {
       newdata[i] = self.data[i]
     }
-    data.deallocate(capacity:self.capacity)
+    data.deallocate()
     data = newdata
     self.capacity = newcapacity
   }
