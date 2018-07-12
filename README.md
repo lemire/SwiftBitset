@@ -140,7 +140,7 @@ swift -I .build/release -L .build/release -lBitset
 ```bash
 $ swift package generate-xcodeproj
 generated: ./Bitset.xcodeproj
-$ open ./Bitset.xcodeproj
+$ open ./SwiftBitset.xcodeproj
 ```
 
 ## Licensing
