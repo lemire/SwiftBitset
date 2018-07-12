@@ -36,7 +36,7 @@ public final class Bitset: Sequence, Equatable, CustomStringConvertible,
   }
 
   deinit {
-    data.deallocate(capacity:capacity)
+    data.deallocate()
   }
 
   // make a bitset containing the list of integers, all values must be non-negative
