@@ -2,7 +2,7 @@
 
 <a href="https://developer.apple.com/swift"><img src="https://img.shields.io/badge/Swift4-compatible-green.svg?style=flat" alt="Swift 4 compatible" /></a>
 <a href="https://github.com/apple/swift-package-manager"><img src="https://img.shields.io/badge/Swift%20Package%20Manager-compatible-brightgreen.svg"/></a>
-
+[![Build Status](https://travis-ci.org/lemire/SwiftBitset.svg?branch=master)](https://travis-ci.org/lemire/SwiftBitset)
 
 A bitset class in Swift for fast and concise set operations over integers. Works under both Linux and MacOS.
 It is engineered to be really fast, on par with portable C/C++ implementations.
