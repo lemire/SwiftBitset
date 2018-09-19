@@ -1,10 +1,14 @@
 language: swift
 os: osx
+xcode_project: SwiftBitset
+xcode_scheme: SwiftBitset-Package
 osx_image:
 - xcode9
 - xcode9.4
 - xcode10
 script:
+- swift package generate-xcodeproj
+- set -o pipefail && xcodebuild -scheme SwiftBitset-Package -enableCodeCoverage YES clean build test
 - swift build
 - swift test
 - swift test -Xswiftc -Ounchecked -s BitsetTests.BitsetTests/testForEachPerformance
