@@ -7,4 +7,4 @@ osx_image:
 script:
 - swift build
 - swift test
-
+- swift test -Xswiftc -Ounchecked -s BitsetTests.BitsetTests/testForEachPerformance
