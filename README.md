@@ -101,11 +101,11 @@ for i in b1 {
 b1.remove(4) // can remove values
 let d1 = b1 & b2;// intersection
 let d2 = b1 | b2;// union
-let d3 = b1 &^ b2;// difference
+let d3 = b1 - b2;// difference
 let d4 = b1 ^ b2;// symmetric difference
 b1 &= b2;// inplace intersection
 b1 |= b2;// inplace union
-b1 &^= b2;// inplace difference
+b1 -= b2;// inplace difference
 b1 ^= b2;// inplace symmetric difference
 ```
 
