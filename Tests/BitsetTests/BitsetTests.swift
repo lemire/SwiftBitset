@@ -193,7 +193,7 @@ class BitsetTests: XCTestCase {
     let B1 = Bitset(b1)
     let B2 = Bitset(b2)
 
-    b2 &^= b1
+    b2 -= b1
     B2.difference(B1)
     XCTAssertEqual(B2, b2, "Bad operator")
   }
@@ -203,7 +203,7 @@ class BitsetTests: XCTestCase {
     let B1 = Bitset(b1)
     let B2 = Bitset(b2)
 
-    let b3 = b2 &^ b1
+    let b3 = b2 - b1
     B2.difference(B1)
     XCTAssertEqual(B2, b3, "Bad operator")
   }
@@ -239,11 +239,11 @@ class BitsetTests: XCTestCase {
      // will print 1 4 10 1000 10000
     _ = b1 & b2;// intersection
     _ = b1 | b2;// union
-    _ = b1 &^ b2;// difference
+    _ = b1 - b2;// difference
     _ = b1 ^ b2;// symmetric difference
     b1 &= b2;// inplace intersection
     b1 |= b2;// inplace union
-    b1 &^= b2;// inplace difference
+    b1 -= b2;// inplace difference
     b1 ^= b2;// inplace symmetric difference
   }
 
@@ -271,7 +271,7 @@ class BitsetTests: XCTestCase {
 
 #if os(Linux)
 extension BitsetTests {
-  static var allTests: [(String, (BitsetTests) -> Void throws->Void)] {
+  static var allTests: [(String, (BitsetTests) -> () throws->())] {
     return [
       ("testUnion", testUnion),
       ("testIterator", testIterator),

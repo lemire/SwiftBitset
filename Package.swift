@@ -7,8 +7,15 @@ let package = Package(
         .library(name: "Bitset", targets: ["Bitset"]),
         .library(name: "BitsetDynamic", type: .dynamic , targets: ["Bitset"]),
     ],
+    dependencies: [],
     targets: [
-        .target(name: "Bitset", dependencies: []),
-        .testTarget(name: "BitsetTests", dependencies: ["Bitset"])
+    .target(
+        name: "Bitset",
+        dependencies: []
+    ),
+    .testTarget(
+        name: "BitsetTests",
+        dependencies:["Bitset"]
+    )
     ]
 )

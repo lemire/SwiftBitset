@@ -1,6 +1,4 @@
 
-infix operator &^;// andNot
-infix operator &^=;// andNot
 
 private extension Int64 {
     func toUInt64() -> UInt64 { return UInt64(bitPattern:self) }
@@ -83,15 +81,16 @@ public final class Bitset: Sequence, Equatable, CustomStringConvertible,
     lhs.union(rhs)
   }
 
+
   // difference between two bitsets, producing a new bitset
-  public static func &^ (lhs: Bitset, rhs: Bitset) -> Bitset {
+  public static func - (lhs: Bitset, rhs: Bitset) -> Bitset {
     let mycopy = Bitset(lhs)
     mycopy.difference(rhs)
     return mycopy
   }
 
   // inplace difference between two bitsets
-  public static func &^= (lhs: Bitset, rhs: Bitset) {
+  public static func -= (lhs: Bitset, rhs: Bitset) {
     lhs.difference(rhs)
   }
 
