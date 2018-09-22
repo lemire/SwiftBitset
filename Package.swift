@@ -5,6 +5,7 @@ let package = Package(
     name: "SwiftBitset",
     products: [
         .library(name: "Bitset", targets: ["Bitset"]),
+        .library(name: "BitsetDynamic", type: .dynamic , targets: ["Bitset"]),
     ],
     targets: [
         .target(name: "Bitset", dependencies: []),

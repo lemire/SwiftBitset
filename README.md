@@ -131,8 +131,11 @@ swift test -Xswiftc -Ounchecked -s BitsetTests.BitsetTests/testForEachPerformanc
 
 For interactive use:
 ```bash
-swift build -Xcc -march=native --configuration release
-swift -I .build/release -L .build/release -lBitset
+$ swift build -Xcc -march=native --configuration release
+$ swift -I .build/release -L .build/release -lBitsetDynamic
+  1> import Bitset
+  2> let b1 = Bitset ()
+  3> print(b1)
 ```
 
 ## For Xcode users (Mac Only)
