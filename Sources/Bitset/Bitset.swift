@@ -39,7 +39,7 @@ public final class Bitset: Sequence, Equatable, CustomStringConvertible,
 
   // make a bitset containing the list of integers, all values must be non-negative
   // adding the value i to the bitset will cause the use of least (i+8)/8 bytes
-  public init(_ allints: Int...) {
+  public init(_ allints: [Int]) {
       var mymax = 0
       for i in allints { mymax = mymax < i ? i : mymax }
       wordcount = (mymax+63)/64 + 1
