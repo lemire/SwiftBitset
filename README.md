@@ -64,7 +64,7 @@ Edit ``main.swift`` (in Sources) so that it looks something like this :
 ```swift
 import Bitset;
 
-let b1 = Bitset (1,4,10,1000,10000);
+let b1 = Bitset (arrayLiteral: 1,4,10,1000,10000);
 for i in b1 {
   print(i)
 }

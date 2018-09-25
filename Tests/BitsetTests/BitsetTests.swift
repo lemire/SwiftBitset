@@ -80,7 +80,7 @@ class BitsetTests: XCTestCase {
 
   func testLiteral() {
     let b1: Bitset = [1, 2, 3]
-    let b2 = Bitset (1, 2, 3)
+    let b2 = Bitset (arrayLiteral: 1, 2, 3)
     XCTAssertEqual(b1, b2, "Bad litteral")
     XCTAssertEqual(b1.contains(1), true, "Bad set/get")
     XCTAssertEqual(b1.contains(2), true, "Bad set/get")
@@ -101,7 +101,7 @@ class BitsetTests: XCTestCase {
     XCTAssertEqual(b.count(), 1, "Bad count")
   }
   func testRemove() {
-    let b = Bitset(1, 4, 10, 1000, 10000)
+    let b = Bitset(arrayLiteral: 1, 4, 10, 1000, 10000)
     print(b)
     XCTAssertEqual(b.count(), 5, "Bad count")
     for i in b {
@@ -111,18 +111,18 @@ class BitsetTests: XCTestCase {
   }
 
   func testIntersection() {
-    let b1 = Bitset(1, 4, 10, 1000, 10000)
-    let b2 = Bitset(1, 3, 10, 1000)
-    let bexpected = Bitset(1, 10, 1000)
+    let b1 = Bitset(arrayLiteral: 1, 4, 10, 1000, 10000)
+    let b2 = Bitset(arrayLiteral: 1, 3, 10, 1000)
+    let bexpected = Bitset(arrayLiteral: 1, 10, 1000)
     b2.intersection(b1)
     XCTAssertEqual(b2, bexpected, "Bad intersection")
     XCTAssertEqual(b2.count(), 3, "Bad intersection count")
   }
 
   func testOperator1() {
-    let b1 = Bitset(1, 4, 10, 1000, 10000)
+    let b1 = Bitset(arrayLiteral: 1, 4, 10, 1000, 10000)
     print(b1)
-    let b2 = Bitset(1, 3, 10, 1000)
+    let b2 = Bitset(arrayLiteral: 1, 3, 10, 1000)
     print(b2)
     let B1 = Bitset(b1)
     print(B1)
@@ -134,8 +134,8 @@ class BitsetTests: XCTestCase {
     XCTAssertEqual(B2, b2, "Bad operator")
   }
   func testOperator2() {
-    let b1 = Bitset(1, 4, 10, 1000, 10000)
-    let b2 = Bitset(1, 3, 10, 1000)
+    let b1 = Bitset(arrayLiteral: 1, 4, 10, 1000, 10000)
+    let b2 = Bitset(arrayLiteral: 1, 3, 10, 1000)
     let B1 = Bitset(b1)
     let B2 = Bitset(b2)
 
@@ -145,8 +145,8 @@ class BitsetTests: XCTestCase {
   }
 
   func testOperator3() {
-    let b1 = Bitset(1, 4, 10, 1000, 10000)
-    let b2 = Bitset(1, 3, 10, 1000)
+    let b1 = Bitset(arrayLiteral: 1, 4, 10, 1000, 10000)
+    let b2 = Bitset(arrayLiteral: 1, 3, 10, 1000)
     let B1 = Bitset(b1)
     let B2 = Bitset(b2)
 
@@ -155,8 +155,8 @@ class BitsetTests: XCTestCase {
     XCTAssertEqual(B2, b2, "Bad operator")
   }
   func testOperator4() {
-    let b1 = Bitset(1, 4, 10, 1000, 10000)
-    let b2 = Bitset(1, 3, 10, 1000)
+    let b1 = Bitset(arrayLiteral: 1, 4, 10, 1000, 10000)
+    let b2 = Bitset(arrayLiteral: 1, 3, 10, 1000)
     let B1 = Bitset(b1)
     let B2 = Bitset(b2)
 
@@ -166,8 +166,8 @@ class BitsetTests: XCTestCase {
   }
 
   func testOperator5() {
-    let b1 = Bitset(1, 4, 10, 1000, 10000)
-    let b2 = Bitset(1, 3, 10, 1000)
+    let b1 = Bitset(arrayLiteral: 1, 4, 10, 1000, 10000)
+    let b2 = Bitset(arrayLiteral: 1, 3, 10, 1000)
     let B1 = Bitset(b1)
     let B2 = Bitset(b2)
 
@@ -177,8 +177,8 @@ class BitsetTests: XCTestCase {
   }
 
   func testOperator6() {
-    let b1 = Bitset(1, 4, 10, 1000, 10000)
-    let b2 = Bitset(1, 3, 10, 1000)
+    let b1 = Bitset(arrayLiteral: 1, 4, 10, 1000, 10000)
+    let b2 = Bitset(arrayLiteral: 1, 3, 10, 1000)
     let B1 = Bitset(b1)
     let B2 = Bitset(b2)
 
@@ -188,8 +188,8 @@ class BitsetTests: XCTestCase {
   }
 
   func testOperator7() {
-    let b1 = Bitset(1, 4, 10, 1000, 10000)
-    let b2 = Bitset(1, 3, 10, 1000)
+    let b1 = Bitset(arrayLiteral: 1, 4, 10, 1000, 10000)
+    let b2 = Bitset(arrayLiteral: 1, 3, 10, 1000)
     let B1 = Bitset(b1)
     let B2 = Bitset(b2)
 
@@ -198,8 +198,8 @@ class BitsetTests: XCTestCase {
     XCTAssertEqual(B2, b2, "Bad operator")
   }
   func testOperator8() {
-    let b1 = Bitset(1, 4, 10, 1000, 10000)
-    let b2 = Bitset(1, 3, 10, 1000)
+    let b1 = Bitset(arrayLiteral: 1, 4, 10, 1000, 10000)
+    let b2 = Bitset(arrayLiteral: 1, 3, 10, 1000)
     let B1 = Bitset(b1)
     let B2 = Bitset(b2)
 
@@ -209,11 +209,11 @@ class BitsetTests: XCTestCase {
   }
 
   func testIntersection2() {
-    let b1 = Bitset(1, 4, 10, 1000, 10000)
+    let b1 = Bitset(arrayLiteral: 1, 4, 10, 1000, 10000)
     XCTAssertEqual(b1.contains(4), true, "Bad init")
     XCTAssertEqual(b1.contains(5), false, "Bad init")
-    let b2 =  Bitset(1, 3, 10, 1000)
-    let bexpected = Bitset(1, 10, 1000)
+    let b2 =  Bitset(arrayLiteral: 1, 3, 10, 1000)
+    let bexpected = Bitset(arrayLiteral: 1, 10, 1000)
     b1.intersection(b2)
     XCTAssertEqual(b1, bexpected, "Bad intersection")
   }
@@ -224,7 +224,7 @@ class BitsetTests: XCTestCase {
     b1.addMany(1, 4, 10, 1000, 10000); // can add many
     let b2 = Bitset()
     b2.addMany(1, 3, 10, 1000)
-    let bexpected = Bitset(1, 3, 4, 10, 1000, 10000); // can init with list
+    let bexpected = Bitset(arrayLiteral: 1, 3, 4, 10, 1000, 10000); // can init with list
     b2.union(b1)
     XCTAssertEqual(b2.count(), 6, "Bad example")
     XCTAssertEqual(b2, bexpected, "Bad example")
@@ -248,7 +248,7 @@ class BitsetTests: XCTestCase {
   }
 
   func testIterator() {
-    let b = Bitset(30, 30 + 30, 30 + 30 + 30, 30 + 30 + 30 + 30)
+    let b = Bitset(arrayLiteral: 30, 30 + 30, 30 + 30 + 30, 30 + 30 + 30 + 30)
     var counter = 30
     for x in b {
      XCTAssertEqual(x, counter, "Bad iter")
