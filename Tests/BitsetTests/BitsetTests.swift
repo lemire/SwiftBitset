@@ -1,4 +1,5 @@
 import XCTest
+import Foundation
 @testable import Bitset
 class BitsetTests: XCTestCase {
   func testAddPerformance() {
@@ -265,6 +266,69 @@ class BitsetTests: XCTestCase {
     bexpected.addMany(1, 3, 4, 10, 1000, 10000)
     b2.union(b1)
     XCTAssertEqual(b2, bexpected, "Bad intersection")
+  }
+
+  func testDeserialisation() {
+    let d1 = Data([UInt8]([
+      0b00000001, 0, 0, 0, 0, 0, 0, 0b01000000, // first word: 8-bytes
+      0b00000100, 0, 0, 0, 0, 0, 0b00010000 // second word: 7-bytes
+    ]))
+    let d2 = Data([UInt8]([
+      0b00000010, 0, 0, 0, 0, 0, 0, 0b10100000, // first word: 8-bytes
+      0b00001010, 0, 0, 0, 0, 0, 0b00101000 // second word: 7-bytes
+    ]))
+    let b1 = Bitset(bytes: d1)
+    let b2 = Bitset([0, 62, 66, 116])
+    let b3 = Bitset(bytes: d2)
+    XCTAssertEqual(b1.count(), 4)
+    XCTAssertEqual(b1.wordcount, 2)
+    XCTAssertEqual(b1.symmetricDifferenceCount(b2), 0)
+    XCTAssertEqual(b1.symmetricDifferenceCount(b3), 11)
+  }
+
+  func testSerialisation() {
+    let b1 = Bitset([0, 62, 66, 116])
+    let d1 = b1.toData()
+    let d2 = Data([UInt8]([
+      0b00000001, 0, 0, 0, 0, 0, 0, 0b01000000, // first word: 8-bytes
+      0b00000100, 0, 0, 0, 0, 0, 0b00010000 // second word: 7-bytes
+    ]))
+    XCTAssertEqual(d1.count, d2.count)
+    for idx in 0..<d1.count {
+      XCTAssertEqual(d1[idx], d2[idx])
+    }
+  }
+
+  func testSerialisationAtBoundaries() {
+    let d0 = Data([UInt8]([ 0, 0, 0, 0, 0, 0, 0, 0 ])) // zero
+    let d1 = Data([UInt8]([ 0b1 ])) // first bit set
+    let d2 = Data([UInt8]([ // first bit of second word set
+      0, 0, 0, 0, 0, 0, 0, 0, // first word: 8-bytes
+      0b00000001 // second word: 1-byte
+    ]))
+    let b0 = Bitset(bytes: d0)
+    let b1 = Bitset(bytes: d1)
+    let b2 = Bitset(bytes: d2)
+    let b0_comp = Bitset()
+    let b1_comp = Bitset([0])
+    let b2_comp = Bitset([64])
+    let d0_comp = b0.toData()
+    let d1_comp = b1.toData()
+    let d2_comp = b2.toData()
+    XCTAssertEqual(b0.count(), 0)
+    XCTAssertEqual(b0.wordcount, 1)
+    XCTAssertEqual(b0.symmetricDifferenceCount(b0_comp), 0)
+    XCTAssertEqual(Data(), d0_comp)
+    XCTAssertEqual(b1.count(), 1)
+    XCTAssertEqual(b1.wordcount, 1)
+    XCTAssertEqual(d1_comp.count, 1)
+    XCTAssertEqual(b1.symmetricDifferenceCount(b1_comp), 0)
+    XCTAssertEqual(d1, d1_comp)
+    XCTAssertEqual(b2.count(), 1)
+    XCTAssertEqual(b2.wordcount, 2)
+    XCTAssertEqual(d2_comp.count, 9)
+    XCTAssertEqual(b2.symmetricDifferenceCount(b2_comp), 0)
+    XCTAssertEqual(d2, d2_comp)
   }
 
 }

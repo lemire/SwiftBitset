@@ -1,4 +1,4 @@
-
+import Foundation
 
 private extension Int64 {
     func toUInt64() -> UInt64 { return UInt64(bitPattern:self) }
@@ -13,6 +13,7 @@ private extension UInt64 {
 // a class that can be used as an efficient set container for non-negative integers
 public final class Bitset: Sequence, Equatable, CustomStringConvertible,
                            Hashable, ExpressibleByArrayLiteral {
+  static let wordSize = 8
   var capacity = 8 // how many words have been allocated
   var wordcount = 0 // how many words are used
 
@@ -62,6 +63,57 @@ public final class Bitset: Sequence, Equatable, CustomStringConvertible,
           data[k] = 0
       }
       for i in elements { add(i) }
+  }
+
+  public init(bytes: Data) {
+    if (bytes.count == 0) {
+      data = UnsafeMutablePointer<UInt64>.allocate(capacity:capacity)
+      return
+    }
+    capacity = (bytes.count - 1) / Bitset.wordSize + 1
+    wordcount = capacity
+    data = UnsafeMutablePointer<UInt64>.allocate(capacity:capacity)
+    var remaining = bytes.count
+    var offset = 0
+    for w in 0..<capacity {
+      let next = offset + Bitset.wordSize
+      var word: UInt64 = 0
+      // TODO: Optimise
+      if remaining < Bitset.wordSize {
+        for b in 0..<remaining {
+          let byte = UInt64(clamping: bytes[offset+b])
+          word = word | (byte << (b * 8))
+        }
+      } else {
+        word = bytes.subdata(in: offset..<next).withUnsafeBytes({ (pointer: UnsafeRawBufferPointer) -> UInt64 in
+          let word = pointer.bindMemory(to: UInt64.self)
+          return CFSwapInt64LittleToHost(word.baseAddress!.pointee)
+        })
+      }
+      data[w] = word
+      remaining -= Bitset.wordSize
+      offset = next
+    }
+  }
+
+  public func toData() -> Data {
+    let heighestWord = self.heighestWord()
+    if heighestWord < 0 { return Data() }
+    let lastWord = Int64(bitPattern: data[heighestWord])
+    let lastBit = Int(flsll(lastWord))
+    let lastBytes = lastBit == 0 ? 0 : (lastBit - 1) / 8 + 1
+    let size = heighestWord * Bitset.wordSize + lastBytes
+    var output = Data(capacity: size)
+    for w in 0...heighestWord {
+      var word = CFSwapInt64HostToLittle(data[w])
+      withUnsafePointer(to: &word) { buffer in
+        buffer.withMemoryRebound(to: UInt8.self, capacity: Bitset.wordSize) { bytes in
+          let byteCount = w == heighestWord ? lastBytes : Bitset.wordSize
+          output.append(bytes, count: byteCount)
+        }
+      }
+    }
+    return output
   }
 
   public typealias Element = Int
@@ -392,6 +444,15 @@ public final class Bitset: Sequence, Equatable, CustomStringConvertible,
     if newcapacity > self.capacity {
       growWordCapacity(newcapacity)
     }
+  }
+
+  func heighestWord() -> Int {
+    var heighest: Int = -1
+    for i in 0..<wordcount {
+      let w = data[i]
+      if w.nonzeroBitCount > 0 { heighest = i }
+    }
+    return heighest
   }
 
   // checks whether the two bitsets have the same content
