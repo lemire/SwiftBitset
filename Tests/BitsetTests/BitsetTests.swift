@@ -268,7 +268,7 @@ class BitsetTests: XCTestCase {
     XCTAssertEqual(b2, bexpected, "Bad intersection")
   }
 
-  func testDeserialisation() {
+  func testDeserialization() {
     let d1 = Data([UInt8]([
       0b00000001, 0, 0, 0, 0, 0, 0, 0b01000000, // first word: 8-bytes
       0b00000100, 0, 0, 0, 0, 0, 0b00010000 // second word: 7-bytes
@@ -286,7 +286,7 @@ class BitsetTests: XCTestCase {
     XCTAssertEqual(b1.symmetricDifferenceCount(b3), 11)
   }
 
-  func testSerialisation() {
+  func testSerialization() {
     let b1 = Bitset([0, 62, 66, 116])
     let d1 = b1.toData()
     let d2 = Data([UInt8]([
@@ -299,36 +299,43 @@ class BitsetTests: XCTestCase {
     }
   }
 
-  func testSerialisationAtBoundaries() {
-    let d0 = Data([UInt8]([ 0, 0, 0, 0, 0, 0, 0, 0 ])) // zero
-    let d1 = Data([UInt8]([ 0b1 ])) // first bit set
-    let d2 = Data([UInt8]([ // first bit of second word set
-      0, 0, 0, 0, 0, 0, 0, 0, // first word: 8-bytes
-      0b00000001 // second word: 1-byte
-    ]))
-    let b0 = Bitset(bytes: d0)
-    let b1 = Bitset(bytes: d1)
-    let b2 = Bitset(bytes: d2)
-    let b0_comp = Bitset()
-    let b1_comp = Bitset([0])
-    let b2_comp = Bitset([64])
-    let d0_comp = b0.toData()
-    let d1_comp = b1.toData()
-    let d2_comp = b2.toData()
-    XCTAssertEqual(b0.count(), 0)
-    XCTAssertEqual(b0.wordcount, 1)
-    XCTAssertEqual(b0.symmetricDifferenceCount(b0_comp), 0)
-    XCTAssertEqual(Data(), d0_comp)
-    XCTAssertEqual(b1.count(), 1)
-    XCTAssertEqual(b1.wordcount, 1)
-    XCTAssertEqual(d1_comp.count, 1)
-    XCTAssertEqual(b1.symmetricDifferenceCount(b1_comp), 0)
-    XCTAssertEqual(d1, d1_comp)
-    XCTAssertEqual(b2.count(), 1)
-    XCTAssertEqual(b2.wordcount, 2)
-    XCTAssertEqual(d2_comp.count, 9)
-    XCTAssertEqual(b2.symmetricDifferenceCount(b2_comp), 0)
-    XCTAssertEqual(d2, d2_comp)
+  func testSerializationAtBoundaries() {
+    precondition(Bitset.wordSize == 8) // test cases will need updating if this breaks
+    struct CompareData {
+      let data: [UInt8]
+      let bitIndex: [Int]
+      let bits: Int
+      let words: Int
+      let length: Int
+    }
+    let compareData = [
+       // zero
+      CompareData(data: [UInt8]([ 0, 0, 0, 0, 0, 0, 0, 0 ]), bitIndex: [], bits: 0, words: 1, length: 0),
+       // first bit set
+      CompareData(data: [UInt8]([ 0b1 ]), bitIndex: [0], bits: 1, words: 1, length: 1),
+       // last bit of 1st word
+      CompareData(data: [UInt8]([ 0, 0, 0, 0, 0, 0, 0, 0b10000000 ]), bitIndex: [63], bits: 1, words: 1, length: 8),
+      // first bit of 2nd word
+      CompareData(data: [UInt8]([ 0, 0, 0, 0, 0, 0, 0, 0, 0b1]), bitIndex: [64], bits: 1, words: 2, length: 9),
+      // last bit of 2nd word
+      CompareData(data: [UInt8]([ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0b10000000]), bitIndex: [127], bits: 1, words: 2, length: 16)
+    ]
+    for (idx, d) in compareData.enumerated() {
+      var raw = Data(d.data)
+      let bitset = Bitset(bytes: raw)
+      let compare = Bitset(d.bitIndex)
+      let export = bitset.toData()
+      XCTAssertEqual(bitset.count(), d.bits, "Bit count: \(d)")
+      XCTAssertEqual(bitset.wordcount, d.words, "Internal word count: \(d)")
+      XCTAssertEqual(bitset.symmetricDifferenceCount(compare), 0, "Difference: \(d)")
+      XCTAssertEqual(export.count, d.length, "Byte length: \(d)") // exported data byte length
+      if idx == 0 { raw = Data() }
+      XCTAssertEqual(raw, export, "Export: \(d)")
+    }
+  }
+
+  func testSerializationPerformance() {
+
   }
 
 }
