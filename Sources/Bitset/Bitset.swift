@@ -65,8 +65,9 @@ public final class Bitset: Sequence, Equatable, CustomStringConvertible,
       for i in elements { add(i) }
   }
 
-  // load a raw bitfield in little endian format, assumes each bit corresponds 1-to-1 to a value in the bitmap
+  // load an uncompressed bitmap, in ascending order
   public init(bytes: Data) {
+    assert(Bitset.wordSize == 8) // this logic is expecting a 64-bit internal representation
     if (bytes.count == 0) {
       data = UnsafeMutablePointer<UInt64>.allocate(capacity:capacity)
       return
@@ -97,9 +98,10 @@ public final class Bitset: Sequence, Equatable, CustomStringConvertible,
     }
   }
 
-  // store raw bitset as uncompressed bytes, with the size being the minimum to store the most significant bit, and the
-  // bits in little endian order. if no bits are set, an empty instance is returned
+  // store as uncompressed bitmap in ascending order, with a bytes size that captures the most significant bits,
+  // or an empty instance if no bits are present
   public func toData() -> Data {
+    assert(Bitset.wordSize == 8) // this logic is expecting a 64-bit internal representation
     let heighestWord = self.heighestWord()
     if heighestWord < 0 { return Data() }
     let lastWord = Int64(bitPattern: data[heighestWord])

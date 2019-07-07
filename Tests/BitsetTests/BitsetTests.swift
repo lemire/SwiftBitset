@@ -334,8 +334,68 @@ class BitsetTests: XCTestCase {
     }
   }
 
-  func testSerializationPerformance() {
+  func generateRandomBitsets(count: Int, size32: Int) -> [Data] {
+    var v: UInt32 = 123456
+    var u: UInt32 = 789123
+    func addRandom(data: inout Data) { // George Marsaglia - http://mathforum.org/kb/message.jspa?messageID=1519408
+      v = 36969*(v & 65535) + (v >> 16);
+      u = 18000*(u & 65535) + (u >> 16);
+      var random: UInt32 = (v << 16) + u & 65535
+      let randomData = Data(bytes: &random, count: 4)
+      data.append(randomData)
+    }
+    // generate test data - randomize to eliminate any potential caching effects
+    var raws = [Data]()
+    for _ in 0..<count {
+      var raw = Data()
+      for _ in 0..<size32 {
+        addRandom(data: &raw)
+      }
+      raw.append(1) // ensure same size
+      raws.append(raw)
+    }
+    return raws
+  }
 
+  func testDeserializationPerformance() {
+    let raws = generateRandomBitsets(count: 20, size32: 400000)
+    var bitsets = [Bitset]()
+    measure {
+      raws.forEach { raw in
+        let bitset = Bitset(bytes: raw)
+        bitsets.append(bitset)
+      }
+    }
+  }
+
+  func testDeserializationSmallPerformance() {
+    let raws = generateRandomBitsets(count: 800000, size32: 1)
+    var bitsets = [Bitset]()
+    measure {
+      raws.forEach { raw in
+        let bitset = Bitset(bytes: raw)
+        bitsets.append(bitset)
+      }
+    }
+  }
+
+  func testSerializationPerformance() {
+    let raws = generateRandomBitsets(count: 20, size32: 200000)
+    var bitsets = [Bitset]()
+    var exports = [Data]()
+    raws.forEach { raw in
+      let bitset = Bitset(bytes: raw)
+      bitsets.append(bitset)
+    }
+    measure {
+      bitsets.forEach { bitset in
+        let export = bitset.toData()
+        exports.append(export)
+      }
+    }
+    for (raw, export) in zip(raws, exports) {
+      XCTAssertEqual(export, raw)
+    }
   }
 
 }
