@@ -68,39 +68,60 @@ public final class Bitset: Sequence, Equatable, CustomStringConvertible,
   // load an uncompressed bitmap, in ascending order
   public init(bytes: Data) {
     assert(Bitset.wordSize == 8) // this logic is expecting a 64-bit internal representation
-    if (bytes.count == 0) {
+    let byteCount = bytes.count
+    if (byteCount == 0) {
       data = UnsafeMutablePointer<UInt64>.allocate(capacity:capacity)
       return
     }
-    capacity = (bytes.count - 1) / Bitset.wordSize + 1
+    capacity = (byteCount - 1) / Bitset.wordSize + 1
     wordcount = capacity
     data = UnsafeMutablePointer<UInt64>.allocate(capacity:capacity)
-    var remaining = bytes.count
-    var offset = 0
-    for w in 0..<capacity {
-      var word: UInt64 = 0
-      if remaining < Bitset.wordSize {
-        for b in 0..<remaining { // about 50% faster than `copyBytes` with `withUnsafeMutableBytes`
-          let byte = UInt64(clamping: bytes[offset + b])
-          word = word | (byte << (b * 8))
-        }
-      } else {
+    func iterate<T>(_ pointer: T, _ f: (T, Int, Int) -> UInt64) -> Int {
+      var remaining = byteCount
+      var offset = 0
+      for w in 0..<capacity {
+        if remaining < Bitset.wordSize { break }
+        // copy entire word - assumes data is aligned to word boundary
         let next = offset + Bitset.wordSize
-        word = bytes
-            .subdata(in: offset..<next)
-            .withUnsafeBytes({
-              $0.bindMemory(to: UInt64.self).baseAddress!.pointee // assumes aligned - also marginally faster than `$0.load(as: UInt64.self)`
-            })
+        var word: UInt64 = f(pointer, offset, w)
         word = CFSwapInt64LittleToHost(word)
         remaining -= Bitset.wordSize
         offset = next
+        data[w] = word
       }
-      data[w] = word
+      return remaining
+    }
+    var remaining = byteCount
+    if remaining > Bitset.wordSize {
+      #if swift(>=5.0)
+        remaining = bytes.withUnsafeBytes { (pointer: UnsafeRawBufferPointer) -> Int in
+          iterate(pointer) { (pointer, offset, _) in
+            pointer.load(fromByteOffset: offset, as: UInt64.self)
+          }
+        }
+      #else
+        remaining = bytes.withUnsafeBytes { // deprecated
+          (pointer: UnsafePointer<UInt64>) -> Int in
+            iterate(pointer) { ($0 + $2).pointee
+          }
+        }
+      #endif
+    }
+    if remaining > 0 {
+      // copy last word fragment
+      // manual byte copy is about 50% faster than `copyBytes` with `withUnsafeMutableBytes`
+      var word: UInt64 = 0
+      let offset = byteCount - remaining
+      for b in 0..<remaining {
+        let byte = UInt64(clamping: bytes[offset + b])
+        word = word | (byte << (b * 8))
+      }
+      data[capacity-1] = word
     }
     // TODO: shrink bitmap according to MSB
   }
 
-  // store as uncompressed bitmap in ascending order, with a bytes size that captures the most significant bits,
+  // store as uncompressed bitmap in ascending order, with a bytes size that captures the most significant bit,
   // or an empty instance if no bits are present
   public func toData() -> Data {
     assert(Bitset.wordSize == 8) // this logic is expecting a 64-bit internal representation

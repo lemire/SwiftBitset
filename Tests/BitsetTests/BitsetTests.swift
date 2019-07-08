@@ -369,7 +369,7 @@ class BitsetTests: XCTestCase {
   }
 
   func testDeserializationSmallPerformance() {
-    let raws = generateRandomBitsets(count: 800000, size32: 1)
+    let raws = generateRandomBitsets(count: 100000, size32: 1)
     var bitsets = [Bitset]()
     measure {
       raws.forEach { raw in
