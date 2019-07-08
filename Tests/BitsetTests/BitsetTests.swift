@@ -1,4 +1,5 @@
 import XCTest
+import Foundation
 @testable import Bitset
 class BitsetTests: XCTestCase {
   func testAddPerformance() {
@@ -265,6 +266,136 @@ class BitsetTests: XCTestCase {
     bexpected.addMany(1, 3, 4, 10, 1000, 10000)
     b2.union(b1)
     XCTAssertEqual(b2, bexpected, "Bad intersection")
+  }
+
+  func testDeserialization() {
+    let d1 = Data([UInt8]([
+      0b00000001, 0, 0, 0, 0, 0, 0, 0b01000000, // first word: 8-bytes
+      0b00000100, 0, 0, 0, 0, 0, 0b00010000 // second word: 7-bytes
+    ]))
+    let d2 = Data([UInt8]([
+      0b00000010, 0, 0, 0, 0, 0, 0, 0b10100000, // first word: 8-bytes
+      0b00001010, 0, 0, 0, 0, 0, 0b00101000 // second word: 7-bytes
+    ]))
+    let b1 = Bitset(bytes: d1)
+    let b2 = Bitset([0, 62, 66, 116])
+    let b3 = Bitset(bytes: d2)
+    XCTAssertEqual(b1.count(), 4)
+    XCTAssertEqual(b1.wordcount, 2)
+    XCTAssertEqual(b1.symmetricDifferenceCount(b2), 0)
+    XCTAssertEqual(b1.symmetricDifferenceCount(b3), 11)
+  }
+
+  func testSerialization() {
+    let b1 = Bitset([0, 62, 66, 116])
+    let d1 = b1.toData()
+    let d2 = Data([UInt8]([
+      0b00000001, 0, 0, 0, 0, 0, 0, 0b01000000, // first word: 8-bytes
+      0b00000100, 0, 0, 0, 0, 0, 0b00010000 // second word: 7-bytes
+    ]))
+    XCTAssertEqual(d1.count, d2.count)
+    for idx in 0..<d1.count {
+      XCTAssertEqual(d1[idx], d2[idx])
+    }
+  }
+
+  func testSerializationAtBoundaries() {
+    precondition(Bitset.wordSize == 8) // test cases will need updating if this breaks
+    struct CompareData {
+      let data: [UInt8]
+      let bitIndex: [Int]
+      let bits: Int
+      let words: Int
+      let length: Int
+    }
+    let compareData = [
+       // zero
+      CompareData(data: [UInt8]([ 0, 0, 0, 0, 0, 0, 0, 0 ]), bitIndex: [], bits: 0, words: 1, length: 0),
+       // first bit set
+      CompareData(data: [UInt8]([ 0b1 ]), bitIndex: [0], bits: 1, words: 1, length: 1),
+       // last bit of 1st word
+      CompareData(data: [UInt8]([ 0, 0, 0, 0, 0, 0, 0, 0b10000000 ]), bitIndex: [63], bits: 1, words: 1, length: 8),
+      // first bit of 2nd word
+      CompareData(data: [UInt8]([ 0, 0, 0, 0, 0, 0, 0, 0, 0b1]), bitIndex: [64], bits: 1, words: 2, length: 9),
+      // last bit of 2nd word
+      CompareData(data: [UInt8]([ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0b10000000]), bitIndex: [127], bits: 1, words: 2, length: 16)
+    ]
+    for (idx, d) in compareData.enumerated() {
+      var raw = Data(d.data)
+      let bitset = Bitset(bytes: raw)
+      let compare = Bitset(d.bitIndex)
+      let export = bitset.toData()
+      XCTAssertEqual(bitset.count(), d.bits, "Bit count: \(d)")
+      XCTAssertEqual(bitset.wordcount, d.words, "Internal word count: \(d)")
+      XCTAssertEqual(bitset.symmetricDifferenceCount(compare), 0, "Difference: \(d)")
+      XCTAssertEqual(export.count, d.length, "Byte length: \(d)") // exported data byte length
+      if idx == 0 { raw = Data() }
+      XCTAssertEqual(raw, export, "Export: \(d)")
+    }
+  }
+
+  func generateRandomBitsets(count: Int, size32: Int) -> [Data] {
+    var v: UInt32 = 123456
+    var u: UInt32 = 789123
+    func addRandom(data: inout Data) { // George Marsaglia - http://mathforum.org/kb/message.jspa?messageID=1519408
+      v = 36969*(v & 65535) + (v >> 16);
+      u = 18000*(u & 65535) + (u >> 16);
+      var random: UInt32 = (v << 16) + u & 65535
+      let randomData = Data(bytes: &random, count: 4)
+      data.append(randomData)
+    }
+    // generate test data - randomize to eliminate any potential caching effects
+    var raws = [Data]()
+    for _ in 0..<count {
+      var raw = Data()
+      for _ in 0..<size32 {
+        addRandom(data: &raw)
+      }
+      raw.append(1) // ensure same size
+      raws.append(raw)
+    }
+    return raws
+  }
+
+  func testDeserializationPerformance() {
+    let raws = generateRandomBitsets(count: 20, size32: 400000)
+    var bitsets = [Bitset]()
+    measure {
+      raws.forEach { raw in
+        let bitset = Bitset(bytes: raw)
+        bitsets.append(bitset)
+      }
+    }
+  }
+
+  func testDeserializationSmallPerformance() {
+    let raws = generateRandomBitsets(count: 100000, size32: 1)
+    var bitsets = [Bitset]()
+    measure {
+      raws.forEach { raw in
+        let bitset = Bitset(bytes: raw)
+        bitsets.append(bitset)
+      }
+    }
+  }
+
+  func testSerializationPerformance() {
+    let raws = generateRandomBitsets(count: 20, size32: 200000)
+    var bitsets = [Bitset]()
+    var exports = [Data]()
+    raws.forEach { raw in
+      let bitset = Bitset(bytes: raw)
+      bitsets.append(bitset)
+    }
+    measure {
+      bitsets.forEach { bitset in
+        let export = bitset.toData()
+        exports.append(export)
+      }
+    }
+    for (raw, export) in zip(raws, exports) {
+      XCTAssertEqual(export, raw)
+    }
   }
 
 }

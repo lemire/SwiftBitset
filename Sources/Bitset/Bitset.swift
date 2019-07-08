@@ -1,4 +1,4 @@
-
+import Foundation
 
 private extension Int64 {
     func toUInt64() -> UInt64 { return UInt64(bitPattern:self) }
@@ -13,6 +13,7 @@ private extension UInt64 {
 // a class that can be used as an efficient set container for non-negative integers
 public final class Bitset: Sequence, Equatable, CustomStringConvertible,
                            Hashable, ExpressibleByArrayLiteral {
+  static let wordSize = 8
   var capacity = 8 // how many words have been allocated
   var wordcount = 0 // how many words are used
 
@@ -62,6 +63,82 @@ public final class Bitset: Sequence, Equatable, CustomStringConvertible,
           data[k] = 0
       }
       for i in elements { add(i) }
+  }
+
+  // load an uncompressed bitmap, in ascending order
+  public init(bytes: Data) {
+    assert(Bitset.wordSize == 8) // this logic is expecting a 64-bit internal representation
+    let byteCount = bytes.count
+    if (byteCount == 0) {
+      data = UnsafeMutablePointer<UInt64>.allocate(capacity:capacity)
+      return
+    }
+    capacity = (byteCount - 1) / Bitset.wordSize + 1
+    wordcount = capacity
+    data = UnsafeMutablePointer<UInt64>.allocate(capacity:capacity)
+    func iterate<T>(_ pointer: T, _ f: (T, Int, Int) -> UInt64) -> Int {
+      var remaining = byteCount
+      var offset = 0
+      for w in 0..<capacity {
+        if remaining < Bitset.wordSize { break }
+        // copy entire word - assumes data is aligned to word boundary
+        let next = offset + Bitset.wordSize
+        var word: UInt64 = f(pointer, offset, w)
+        word = CFSwapInt64LittleToHost(word)
+        remaining -= Bitset.wordSize
+        offset = next
+        data[w] = word
+      }
+      return remaining
+    }
+    var remaining = byteCount
+    if remaining > Bitset.wordSize {
+      #if swift(>=5.0)
+        remaining = bytes.withUnsafeBytes { (pointer: UnsafeRawBufferPointer) -> Int in
+          iterate(pointer) { (pointer, offset, _) in
+            pointer.load(fromByteOffset: offset, as: UInt64.self)
+          }
+        }
+      #else
+        remaining = bytes.withUnsafeBytes { // deprecated
+          (pointer: UnsafePointer<UInt64>) -> Int in
+            iterate(pointer) { ($0 + $2).pointee
+          }
+        }
+      #endif
+    }
+    if remaining > 0 {
+      // copy last word fragment
+      // manual byte copy is about 50% faster than `copyBytes` with `withUnsafeMutableBytes`
+      var word: UInt64 = 0
+      let offset = byteCount - remaining
+      for b in 0..<remaining {
+        let byte = UInt64(clamping: bytes[offset + b])
+        word = word | (byte << (b * 8))
+      }
+      data[capacity-1] = word
+    }
+    // TODO: shrink bitmap according to MSB
+  }
+
+  // store as uncompressed bitmap in ascending order, with a bytes size that captures the most significant bit,
+  // or an empty instance if no bits are present
+  public func toData() -> Data {
+    assert(Bitset.wordSize == 8) // this logic is expecting a 64-bit internal representation
+    let heighestWord = self.heighestWord()
+    if heighestWord < 0 { return Data() }
+    let lastWord = Int64(bitPattern: data[heighestWord])
+    let lastBit = Int(flsll(lastWord))
+    let lastBytes = lastBit == 0 ? 0 : (lastBit - 1) / 8 + 1
+    let size = heighestWord * Bitset.wordSize + lastBytes
+    var output = Data(capacity: size)
+    for w in 0...heighestWord {
+      var word = CFSwapInt64HostToLittle(data[w])
+      let byteCount = w == heighestWord ? lastBytes : Bitset.wordSize
+      let bytes = Data(bytes: &word, count: byteCount) // about 10x faster than memory copy
+      output.append(bytes)
+    }
+    return output
   }
 
   public typealias Element = Int
@@ -392,6 +469,14 @@ public final class Bitset: Sequence, Equatable, CustomStringConvertible,
     if newcapacity > self.capacity {
       growWordCapacity(newcapacity)
     }
+  }
+
+  func heighestWord() -> Int {
+    for i in (0..<wordcount).reversed() {
+      let w = data[i]
+      if w.nonzeroBitCount > 0 { return i }
+    }
+    return -1
   }
 
   // checks whether the two bitsets have the same content
