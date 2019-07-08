@@ -17,7 +17,7 @@
                BlueprintIdentifier = "55B87AE222CC35CF008C6F18"
                BuildableName = "Bitset.framework"
                BlueprintName = "Bitset"
-               ReferencedContainer = "container:Bitset.xcodeproj">
+               ReferencedContainer = "container:Xcode/Bitset.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -35,7 +35,7 @@
                BlueprintIdentifier = "55B87AEB22CC35CF008C6F18"
                BuildableName = "BitsetTests.xctest"
                BlueprintName = "BitsetTests"
-               ReferencedContainer = "container:Bitset.xcodeproj">
+               ReferencedContainer = "container:Xcode/Bitset.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -45,7 +45,7 @@
             BlueprintIdentifier = "55B87AE222CC35CF008C6F18"
             BuildableName = "Bitset.framework"
             BlueprintName = "Bitset"
-            ReferencedContainer = "container:Bitset.xcodeproj">
+            ReferencedContainer = "container:Xcode/Bitset.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>
@@ -67,7 +67,7 @@
             BlueprintIdentifier = "55B87AE222CC35CF008C6F18"
             BuildableName = "Bitset.framework"
             BlueprintName = "Bitset"
-            ReferencedContainer = "container:Bitset.xcodeproj">
+            ReferencedContainer = "container:Xcode/Bitset.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>
@@ -85,7 +85,7 @@
             BlueprintIdentifier = "55B87AE222CC35CF008C6F18"
             BuildableName = "Bitset.framework"
             BlueprintName = "Bitset"
-            ReferencedContainer = "container:Bitset.xcodeproj">
+            ReferencedContainer = "container:Xcode/Bitset.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </ProfileAction>

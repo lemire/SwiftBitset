@@ -24,10 +24,10 @@
 
 /* Begin PBXFileReference section */
 		552CCD7622D1CFB90048A27E /* Bitset.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Bitset.swift; sourceTree = "<group>"; };
+		5590D72F22D2D3B900AD4C84 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = Xcode/Info.plist; sourceTree = "<group>"; };
+		5590D73022D2D3B900AD4C84 /* InfoTest.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = InfoTest.plist; path = Xcode/InfoTest.plist; sourceTree = "<group>"; };
 		55B87AE322CC35CF008C6F18 /* Bitset.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Bitset.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		55B87AE722CC35CF008C6F18 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		55B87AEC22CC35CF008C6F18 /* BitsetTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BitsetTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		55B87AF322CC35CF008C6F18 /* InfoTest.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = InfoTest.plist; sourceTree = "<group>"; };
 		55B87B4122CC6F25008C6F18 /* LinuxMain.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = LinuxMain.swift; path = Tests/LinuxMain.swift; sourceTree = "<group>"; };
 		55B87B4322CC6F3D008C6F18 /* BitsetTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = BitsetTests.swift; path = Tests/BitsetTests/BitsetTests.swift; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
@@ -68,12 +68,21 @@
 			path = Sources/Bitset;
 			sourceTree = "<group>";
 		};
+		5590D72E22D2D3A000AD4C84 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				5590D72F22D2D3B900AD4C84 /* Info.plist */,
+				5590D73022D2D3B900AD4C84 /* InfoTest.plist */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
 		55B87AD922CC35CF008C6F18 = {
 			isa = PBXGroup;
 			children = (
+				5590D72E22D2D3A000AD4C84 /* Resources */,
 				552CCD6B22D1CF1D0048A27E /* Sources */,
 				55B87B3C22CC6EDA008C6F18 /* Tests */,
-				55B87B0122CC3708008C6F18 /* Framework */,
 				55B87AE422CC35CF008C6F18 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -85,15 +94,6 @@
 				55B87AEC22CC35CF008C6F18 /* BitsetTests.xctest */,
 			);
 			name = Products;
-			sourceTree = "<group>";
-		};
-		55B87B0122CC3708008C6F18 /* Framework */ = {
-			isa = PBXGroup;
-			children = (
-				55B87AF322CC35CF008C6F18 /* InfoTest.plist */,
-				55B87AE722CC35CF008C6F18 /* Info.plist */,
-			);
-			path = Framework;
 			sourceTree = "<group>";
 		};
 		55B87B3C22CC6EDA008C6F18 /* Tests */ = {
@@ -191,7 +191,7 @@
 			);
 			mainGroup = 55B87AD922CC35CF008C6F18;
 			productRefGroup = 55B87AE422CC35CF008C6F18 /* Products */;
-			projectDirPath = "";
+			projectDirPath = ..;
 			projectRoot = "";
 			targets = (
 				55B87AE222CC35CF008C6F18 /* Bitset */,
@@ -277,7 +277,6 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
@@ -342,7 +341,6 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
@@ -379,7 +377,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = Framework/Info.plist;
+				INFOPLIST_FILE = Xcode/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -389,6 +387,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.lemire.SwiftBitset;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos macosx watchos watchsimulator appletvos appletvsimulator";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -405,7 +404,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = Framework/Info.plist;
+				INFOPLIST_FILE = Xcode/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -415,6 +414,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.lemire.SwiftBitset;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos macosx watchos watchsimulator appletvos appletvsimulator";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -426,7 +426,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
-				INFOPLIST_FILE = Framework/InfoTest.plist;
+				INFOPLIST_FILE = Xcode/InfoTest.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -434,6 +434,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.lemire.SwiftBitsetTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos macosx watchos watchsimulator appletvos appletvsimulator";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_PRECOMPILE_BRIDGING_HEADER = NO;
 				SWIFT_VERSION = 5.0;
@@ -447,7 +448,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
-				INFOPLIST_FILE = Framework/InfoTest.plist;
+				INFOPLIST_FILE = Xcode/InfoTest.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -455,6 +456,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.lemire.SwiftBitsetTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos macosx watchos watchsimulator appletvos appletvsimulator";
 				SWIFT_PRECOMPILE_BRIDGING_HEADER = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
