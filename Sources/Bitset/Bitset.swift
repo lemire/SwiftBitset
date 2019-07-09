@@ -67,7 +67,7 @@ public final class Bitset: Sequence, Equatable, CustomStringConvertible,
 
   // load an uncompressed bitmap from a byte buffer, in ascending order
   // The expected format is equivalent to that of an array of 64-bit unsigned integers stored 
-  // using the little endian encoding.
+  // using the little endian encoding, except that zero bytes at the end are omitted.
   // This function is compatible with the toData() function.
   public init(bytes: Data) {
     assert(Bitset.wordSize == 8) // this logic is expecting a 64-bit internal representation
@@ -127,7 +127,7 @@ public final class Bitset: Sequence, Equatable, CustomStringConvertible,
   // store as uncompressed bitmap as a byte buffer in ascending order, with a bytes size that captures the most significant bit,
   // or an empty instance if no bits are present
   // The format is equivalent to that of an array of 64-bit unsigned integers stored 
-  // using the little endian encoding.
+  // using the little endian encoding, except that zero bytes at the end are omitted.
   // This function is compatible with the init(bytes: Data) constructor. 
   public func toData() -> Data {
     assert(Bitset.wordSize == 8) // this logic is expecting a 64-bit internal representation
